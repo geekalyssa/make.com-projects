@@ -18,14 +18,14 @@ flowchart TD
   A[Contact form / LinkedIn reply triggers] --> B{Lead in CRM?}
   B -- No --> C[Create/Update Person/Org in Pipedrive]
   B -- Yes --> C
-  C --> D["AI/LinkedIn/Website research - Truth JSON (fitScore,keySignals)"]
+  C --> D["AI/LinkedIn/Website research-Truth JSON (fitScore,keySignals)"]
   D --> E{Qualified?}
   E -- No --> X[Log & close loop]
   E -- Yes --> F[Create Deal in Pipedrive]
   F --> G{Has valid email?}
-  G -- Yes --> H[Generate AI outreach email/message]
+  G -- Yes --> H[Generate AI outreach message]
   H --> I[Queue email sequence / task]
-  G -- No --> J[Send LinkedIn message via Extendly]
+  G -- No --> J[Send LinkedIn message via Expandi]
   J --> I
 ```
 
