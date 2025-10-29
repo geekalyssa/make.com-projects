@@ -7,7 +7,7 @@ All examples are fully sanitized, schema-agnostic, and production-oriented.
 ## 🚀 What’s Inside
 Two real automation suites (end-to-end):
 
-### 1️⃣ Outbound Automation Suite
+### 1️. Outbound Automation Suite
 AI-powered pipeline → enrich + generate first message + sync to outreach tools.
 
 Key Skills:
@@ -16,11 +16,11 @@ Key Skills:
 - Data normalization & fallback logic
 - Outreach personalization with dynamic fields
 
-📂 `/outbound-suite/`
+📂 `/outbound-automation-suite/`
 
 ---
 
-### 2️⃣ Inbound Lead Engine (Agencies & Services)
+### 2️. Inbound Lead Engine (Agencies & Services)
 Capture → qualify → route to CRM → AI-assisted outreach.
 
 Key Skills:
