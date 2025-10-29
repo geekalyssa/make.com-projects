@@ -1,0 +1,3518 @@
+{
+  "name":"4. Find Recent News AI",
+  "flow":[
+    {
+      "id":1,
+      "module":"airtable:ActionSearchRecords",
+      "version":3,
+      "parameters":{
+        "__IMTCONN__":4480979
+      },
+      "mapper":{
+        "base":"{{airtableBaseId}}",
+        "sort":[
+          {
+            "field":"Created",
+            "direction":"desc"
+          },
+          {
+            "field":"Data Intelligence Score",
+            "direction":"asc"
+          }
+        ],
+        "view":"{{airtableViewId1}}",
+        "table":"{{airtableTableId1}}",
+        "fields":[
+          "Lead#",
+          "First Name",
+          "Last Name",
+          "Full Name",
+          "Executive Title",
+          "Work Email",
+          "NeverBounce Status",
+          "Lead Priority",
+          "Lead Status",
+          "Company",
+          "Data Confidence Score",
+          "NeverBounce Flag",
+          "LinkedIn",
+          "Recent Business Activity",
+          "Test Leads",
+          "AI Activity Summary",
+          "Data Intelligence Score",
+          "Seniority",
+          "Company Name",
+          "Department",
+          "Job Start",
+          "Recent Activity Date",
+          "Campaign Assigned To",
+          "Email Status",
+          "Created",
+          "Last Modified",
+          "Apollo Enriched",
+          "Apollo PersonID",
+          "Citations",
+          "Intelligence Score Description",
+          "Raw JSON",
+          "Enrichment Source",
+          "Company Domain",
+          "AI Generated Messages",
+          "Subject Idea (from AI Generated Messages)",
+          "Generated Primary Positioning (from AI Generated Messages)",
+          "Generated Message (from AI Generated Messages)",
+          "Generated Call to Action (from AI Generated Messages)",
+          "Campaign ID",
+          "Industry",
+          "Lemlist Lead ID",
+          "Salesflare ContactID",
+          "Approve Low Priority",
+          "Apollo Account ID",
+          "Apollo Contact ID",
+          "Is Paused",
+          "Campaign Step name (from AI Generated Messages)",
+          "Region",
+          "Call Priority",
+          "crmTask",
+          "Justcall Sync",
+          "Enrichment Failed",
+          "Leads Rollup (from Company)",
+          "High Lead#",
+          "Medium Lead#",
+          "High_RollUp",
+          "Medium_RollUp",
+          "IsDuplicate",
+          "Low Leads",
+          "Phone",
+          "AI Generated Messages copy",
+          "Campaigns",
+          "grata-import-domain"
+        ],
+        "formula":"AND(  \r\n    LEN(TRIM({Recent Business Activity})) = 0,\r\n    {NeverBounce Status} = 'valid',\n    {Lead Priority} !='Risk', \r\n  NOT(\r\n    OR(\r\n      {Lead Status} = \"done\",\r\n      {Lead Status} = \"unsubscribed\",\r\n      {Lead Status} = \"notInterested\"\r\n    )\r\n  )\r\n)",
+        "maxRecords":"10",
+        "useColumnId":false
+      },
+      "metadata":{
+        "designer":{
+          "x":0,
+          "y":900,
+          "name":"Intelligence search"
+        },
+        "parameters":[
+          {
+            "name":"__IMTCONN__",
+            "type":"account:airtable3,airtable2",
+            "label":"Connection",
+            "required":true
+          }
+        ],
+        "expect":[
+          {
+            "name":"base",
+            "type":"select",
+            "label":"Base",
+            "required":true
+          },
+          {
+            "name":"useColumnId",
+            "type":"boolean",
+            "label":"Use Column ID",
+            "required":true
+          },
+          {
+            "name":"table",
+            "type":"select",
+            "label":"Table",
+            "required":true
+          },
+          {
+            "name":"formula",
+            "type":"text",
+            "label":"Formula"
+          },
+          {
+            "name":"maxRecords",
+            "type":"integer",
+            "label":"Limit"
+          },
+          {
+            "name":"sort",
+            "spec":[
+              {
+                "name":"field",
+                "type":"select",
+                "label":"Field",
+                "dynamic":true,
+                "options":[]
+              },
+              {
+                "name":"direction",
+                "type":"select",
+                "label":"Direction",
+                "options":[
+                  {
+                    "label":"Descending",
+                    "value":"desc"
+                  },
+                  {
+                    "label":"Ascending",
+                    "value":"asc"
+                  }
+                ]
+              }
+            ],
+            "type":"array",
+            "label":"Sort"
+          },
+          {
+            "name":"view",
+            "type":"select",
+            "label":"View"
+          },
+          {
+            "name":"fields",
+            "type":"select",
+            "label":"Output Fields",
+            "multiple":true
+          }
+        ]
+      }
+    },
+    {
+      "id":40,
+      "module":"util:FunctionSleep",
+      "version":1,
+      "parameters":{},
+      "mapper":{
+        "duration":"10"
+      },
+      "metadata":{
+        "designer":{
+          "x":300,
+          "y":900,
+          "name":"delay 10 secs"
+        },
+        "expect":[
+          {
+            "name":"duration",
+            "type":"uinteger",
+            "label":"Delay",
+            "required":true,
+            "validate":{
+              "max":300,
+              "min":1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id":46,
+      "module":"builtin:BasicRouter",
+      "version":1,
+      "mapper":null,
+      "metadata":{
+        "designer":{
+          "x":600,
+          "y":900
+        }
+      },
+      "routes":[
+        {
+          "flow":[
+            {
+              "id":2,
+              "module":"airtable:ActionGetRecord",
+              "version":3,
+              "parameters":{
+                "__IMTCONN__":4480979
+              },
+              "filter":{
+                "name":"Company Exists",
+                "conditions":[
+                  [
+                    {
+                      "a":"{{1.Company[1]}}",
+                      "o":"exist"
+                    }
+                  ]
+                ]
+              },
+              "mapper":{
+                "id":"{{1.Company[1]}}",
+                "base":"{{airtableBaseId}}",
+                "table":"{{airtableTableId2}}",
+                "useColumnId":false
+              },
+              "metadata":{
+                "designer":{
+                  "x":900,
+                  "y":750,
+                  "name":"getCompany Info"
+                },
+                "parameters":[
+                  {
+                    "name":"__IMTCONN__",
+                    "type":"account:airtable3,airtable2",
+                    "label":"Connection",
+                    "required":true
+                  }
+                ],
+                "expect":[
+                  {
+                    "name":"base",
+                    "type":"select",
+                    "label":"Base",
+                    "required":true
+                  },
+                  {
+                    "name":"useColumnId",
+                    "type":"boolean",
+                    "label":"Use Column ID",
+                    "required":true
+                  },
+                  {
+                    "name":"table",
+                    "type":"select",
+                    "label":"Table",
+                    "required":true
+                  },
+                  {
+                    "name":"id",
+                    "type":"text",
+                    "label":"Record ID",
+                    "required":true
+                  }
+                ]
+              }
+            },
+            {
+              "id":44,
+              "module":"builtin:BasicRouter",
+              "version":1,
+              "parameters":{
+                "else":1
+              },
+              "mapper":null,
+              "metadata":{
+                "designer":{
+                  "x":1200,
+                  "y":750
+                }
+              },
+              "routes":[
+                {
+                  "flow":[
+                    {
+                      "id":3,
+                      "module":"perplexity-ai:createAChatCompletion",
+                      "version":1,
+                      "parameters":{
+                        "__IMTCONN__":4496267
+                      },
+                      "filter":{
+                        "name":"company domain and industry exists",
+                        "conditions":[
+                          [
+                            {
+                              "a":"{{2.Domain}}",
+                              "o":"exist"
+                            },
+                            {
+                              "a":"{{2.Vertical}}",
+                              "o":"exist"
+                            }
+                          ]
+                        ]
+                      },
+                      "mapper":{
+                        "model":"sonar-reasoning",
+                        "messages":[
+                          {
+                            "role":"system",
+                            "content":"You are an expert M&A research analyst and cold-outreach strategist for a search-fund firm. Your job is to gather, validate, and score intelligence on privately held small-to-medium businesses so that our team can run targeted acquisition campaigns.\r\n\r\n---  \r\n**Response Style Requirements**  \r\n* Use concise, analytical language and professional M&A terminology.  \r\n* Focus on objective, factual intelligence, no outreach copy, valuation proposals, or speculative advice. \n* All dates in ISO format (YYYY-MM-DD).  \n* Use exactly these top‑level keys: news, linkedin_activity, intelligence_score, intelligence_summary\r\n\r\n* Output Sections\r\n  1. NEWS  \r\n  2. LINKEDIN_ACTIVITY  \r\n  3. DATA_CONFIDENCE_SCORE  \r\n  4. INTELLIGENCE_SUMMARY\r\n\r\n---  \r\n**NEWS**  \r\n* Pull the top 3 items from the last 0–200 days.  \r\n* For each item, include:\r\n  - entity_type (“company”)  \r\n  - headline  \r\n  - date  \r\n  - source name\r\n  - URL  \r\n  - three-sentence factual summary  \r\n\r\n---  \r\n**LINKEDIN_ACTIVITY**  \r\n* Pull the top 3 public activities for the primary contact (entity_type: “contact”) in the same recency window.  \r\n* For each activity, include:\r\n  - activity_type (post/comment/share)  \r\n  - date  \r\n  - summary  \r\n  - URL  \r\n\r\n---  \r\n**DATA_CONFIDENCE_SCORE**  \r\n* Assign a Perplexity Intelligence Score (1–10) using weights:  \r\n  - News Recency: 40%  \r\n  - News Source reliability: 40%  \r\n  - LinkedIn activity and its recency: 20%  \r\n* Clearly list:\r\n  - raw sub-scores (e.g. Recency: 3/4)  \r\n  - weighting  \r\n  - final rounded score\n* one-sentence score description\r\n---  \r\n**INTELLIGENCE_SUMMARY**  \r\n- 5–6 bullet points highlighting deal-relevant signals:\r\n  - Recent financial or strategic moves  \r\n  - Event dates & locations  \r\n  - Partnerships, leadership changes, or succession cues  \r\n  - Expansion or contraction signals  \r\n  - Outreach-readiness indicators  \r\n  - **For each bullet, include: Event/Fact → Date → Relevance**\r\n- Keep each bullet under 250 characters.\r\n \r\n---  \r\n**Data Quality Standards**  \r\n* Use only data ≤12 months old for News/Activity; older context can extend to 2–3 years if highly relevant.  \r\n* Cite all dates, figures, and sources explicitly.  \r\n* If information is unavailable, use “Unknown” and note confidence level. Example, \"headline\": \"Unknown\".\n* Sort News and linkedin activity by most recent publication date/month (descending) on top in JSON output. \r\n\r\n\r\n---\r\n\n## Output must always be valid JSON with these sections as top-level keys. SAMPLE JSON BELOW:\n\r\n```{\r\n  \"news\": [\r\n    {\r\n      \"headline\": \"Acme Corp Raises $25M in Series B Funding\",\r\n      \"publication_date\": \"2025-07-10\",\r\n      \"source_name\": \"TechCrunch\",\r\n      \"entity\": \"company\",\r\n      \"url\": \"https://techcrunch.com/acme-series-b\",\r\n      \"summary\": \"Acme Corp secured $25 million in Series B financing led by Venture Partners to expand its AI-powered analytics platform.\"\r\n    },\r\n    {\r\n      \"headline\": \"Acme Corp Launches New Mobile App\",\r\n      \"publication_date\": \"2025-06-28\",\r\n      \"source_name\": \"Business Insider\",\r\n      \"entity\": \"company\",\r\n      \"url\": \"https://businessinsider.com/acme-mobile-app\",\r\n      \"summary\": \"Acme Corp rolled out a redesigned mobile application that integrates real-time collaboration features for enterprise users.\"\r\n    }\r\n  ],\r\n  \"linkedin_activity\": [\r\n    {\r\n      \"activity_type\": \"post\",\r\n      \"date\": \"2025-07-15\",\r\n      \"entity\": \"contact\",\r\n      \"summary\": \"Shared insights on the future of AI in small-business automation, highlighting three key trends.\",\r\n      \"url\": \"https://www.linkedin.com/posts/jane-doe_ai-automation-smallbiz-activity-12345\"\r\n    },\r\n    {\r\n      \"activity_type\": \"comment\",\r\n      \"date\": \"2025-07-12\",\r\n      \"entity\": \"company\",\r\n      \"summary\": \"Commented on a peer’s post about data privacy, noting the importance of end-to-end encryption.\",\r\n      \"url\": \"https://www.linkedin.com/feed/update/urn:li:activity:67890\"\r\n    }\r\n  ],\r\n \"intelligence_score\": {\r\n    \"score\": 8,\r\n    \"breakdown\": {\r\n      \"recency\": 3,\r\n      \"source_reliability\": 4,\r\n      \"linkedin_activity\": 1\r\n    },\r\n    \"weights\": {\r\n      \"recency\": 0.4,\r\n      \"source_reliability\": 0.4,\r\n      \"linkedin_activity\": 0.2\r\n    },\n \"description\": \"News recency score reflects that both events fell outside strict 30-day window but within 90-day range. Source reliability is high as primary information comes directly from company-controlled channels\"\n},\r\n  \"intelligence_summary\": [\r\n    \"Secured $25M Series B funding – 2025-07-10 – signals growth capital availability.\",\r\n    \"Mobile app launch – 2025-06-28 – potential expansion in enterprise tools.\",\r\n    \"CEO active on LinkedIn discussing AI trends – 2025-07-15 – aligns with industry transformation.\",\r\n    \"No leadership changes detected in past year – stability in management.\",\r\n    \"Strong engagement with industry news – supports warm outreach.\"\r\n  ]\r\n}\r\n```"
+                          },
+                          {
+                            "role":"user",
+                            "content":"For **{{2.Name}}** (from the last **{recency window, e.g. 0- 200 days}**):\n**Inputs:**  \r\n- Company LinkedIn : {{2.`Company LinkedIn`}}  \r\n- Company Domain  : {{2.Domain}}  \r\n- Industry     : {{2.Vertical}}  \r\n- Headquarters   : {{2.Headquarters}}  \n\r\n# TASKS\n1.  Find up to 5 most recent, relevant news items or events from reputable business/industry sources.  \r\n   - Include only verifiable events (no rumors/speculation).  \r\n   - Output sorted by `publication_date` (newest first).  \r\n   - For each:  \r\n     - `headline` (exact from source)  \r\n     - `publication_date` (YYYY-MM-DD)  \r\n     - `source_name`  \r\n     - `url` (canonical)  \r\n     - `summary` (3 – 6 factual bullet points, each bullet ≤250 characters, mentioning entities like company, people[], event_name, location). One sentence explaining why this news could be referenced in a cold outreach. \r\n\r\n2. For the contact **{{1.`Full Name`}}** at **{{1.LinkedIn}}** (from the last **{recency window, e.g. 90 days}**):\r\n     - Find up to 5 most recent, relevant news items or events from reputable business/industry sources.  \r\n     - Include only verifiable events (no rumors/speculation).  \r\n     - Output sorted by `publication_date` (newest first).  \r\n     - For each:  \r\n       - `headline` (exact from source)  \r\n       - `publication_date` (YYYY-MM-DD)  \r\n       - `source_name`  \r\n       - `url` (canonical)  \r\n       - `summary` (3 – 6 factual bullet points, each ≤250 characters, mentioning entities like company, people[], event_name, location). One sentence explaining why this news could be referenced in a cold outreach)\n\n3. Return OUTPUT as JSON as instructed in System Prompt. "
+                          }
+                        ],
+                        "max_tokens":"7000",
+                        "temperature":"1",
+                        "web_search_options":{
+                          "search_context_size":"medium"
+                        }
+                      },
+                      "metadata":{
+                        "designer":{
+                          "x":1500,
+                          "y":600
+                        },
+                        "parameters":[
+                          {
+                            "name":"__IMTCONN__",
+                            "type":"account:perplexity-ai",
+                            "label":"Connection",
+                            "required":true
+                          }
+                        ],
+                        "expect":[
+                          {
+                            "name":"model",
+                            "type":"select",
+                            "label":"Model",
+                            "required":true
+                          },
+                          {
+                            "name":"messages",
+                            "spec":[
+                              {
+                                "name":"content",
+                                "type":"text",
+                                "label":"Content",
+                                "required":true
+                              },
+                              {
+                                "name":"role",
+                                "type":"select",
+                                "label":"Role",
+                                "options":[
+                                  {
+                                    "label":"User",
+                                    "value":"user"
+                                  },
+                                  {
+                                    "label":"Assistant",
+                                    "value":"assistant"
+                                  },
+                                  {
+                                    "label":"System",
+                                    "value":"system"
+                                  }
+                                ],
+                                "required":true
+                              }
+                            ],
+                            "type":"array",
+                            "label":"Messages",
+                            "required":true
+                          },
+                          {
+                            "name":"max_tokens",
+                            "type":"number",
+                            "label":"Max Tokens"
+                          },
+                          {
+                            "name":"temperature",
+                            "type":"number",
+                            "label":"Temperature",
+                            "validate":{
+                              "max":1.999,
+                              "min":0
+                            }
+                          },
+                          {
+                            "name":"web_search_options",
+                            "spec":[
+                              {
+                                "name":"search_context_size",
+                                "type":"select",
+                                "label":"Search Context Size",
+                                "validate":{
+                                  "enum":[
+                                    "low",
+                                    "medium",
+                                    "high"
+                                  ]
+                                }
+                              }
+                            ],
+                            "type":"collection",
+                            "label":"Web Search Options"
+                          },
+                          {
+                            "name":"top_p",
+                            "type":"number",
+                            "label":"Top P",
+                            "validate":{
+                              "max":1,
+                              "min":0
+                            }
+                          },
+                          {
+                            "name":"top_k",
+                            "type":"number",
+                            "label":"Top K",
+                            "validate":{
+                              "max":2048,
+                              "min":0
+                            }
+                          },
+                          {
+                            "name":"presence_penalty",
+                            "type":"number",
+                            "label":"Presence Penalty",
+                            "validate":{
+                              "max":2,
+                              "min":-2
+                            }
+                          },
+                          {
+                            "name":"frequency_penalty",
+                            "type":"number",
+                            "label":"Frequency Penalty",
+                            "validate":{
+                              "min":0
+                            }
+                          },
+                          {
+                            "name":"search_domain_filter",
+                            "spec":{
+                              "name":"value",
+                              "type":"text"
+                            },
+                            "type":"array",
+                            "label":"Search Domain Filter"
+                          },
+                          {
+                            "name":"search_recency_filter",
+                            "type":"select",
+                            "label":"Search Recency Filter",
+                            "validate":{
+                              "enum":[
+                                "month",
+                                "week",
+                                "day",
+                                "hour"
+                              ]
+                            }
+                          },
+                          {
+                            "name":"return_images",
+                            "type":"boolean",
+                            "label":"Return Images"
+                          },
+                          {
+                            "name":"return_related_questions",
+                            "type":"boolean",
+                            "label":"Return Related Questions"
+                          }
+                        ],
+                        "advanced":true
+                      },
+                      "onerror":[
+                        {
+                          "id":53,
+                          "module":"builtin:Ignore",
+                          "version":1,
+                          "metadata":{
+                            "designer":{
+                              "x":1800,
+                              "y":750
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id":9,
+                      "module":"util:SetVariables",
+                      "version":1,
+                      "parameters":{},
+                      "mapper":{
+                        "scope":"roundtrip",
+                        "variables":[
+                          {
+                            "name":"json",
+                            "value":"{{first(split(first(split(last(split(3.choices[1].message.content; \"</think>\")); \"```json\")); \"```\"))}}"
+                          }
+                        ]
+                      },
+                      "metadata":{
+                        "designer":{
+                          "x":1800,
+                          "y":450
+                        },
+                        "expect":[
+                          {
+                            "name":"variables",
+                            "spec":[
+                              {
+                                "name":"name",
+                                "type":"text",
+                                "label":"Variable name",
+                                "required":true
+                              },
+                              {
+                                "name":"value",
+                                "type":"any",
+                                "label":"Variable value"
+                              }
+                            ],
+                            "type":"array",
+                            "label":"Variables"
+                          },
+                          {
+                            "name":"scope",
+                            "type":"select",
+                            "label":"Variable lifetime",
+                            "required":true,
+                            "validate":{
+                              "enum":[
+                                "roundtrip",
+                                "execution"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id":16,
+                      "module":"regexp:Replace",
+                      "version":1,
+                      "parameters":{},
+                      "mapper":{
+                        "text":"{{9.json}}",
+                        "value":"{{emptystring}}",
+                        "global":true,
+                        "pattern":"(\\\\n+|\\\\+|[\\n+])|(\\[\\d\\]|(\\s{2,})|(\\\"{2,}))",
+                        "multiline":true,
+                        "sensitive":false,
+                        "singleline":false
+                      },
+                      "metadata":{
+                        "designer":{
+                          "x":2100,
+                          "y":450
+                        },
+                        "expect":[
+                          {
+                            "name":"pattern",
+                            "type":"text",
+                            "label":"{{airtableConnection}}",
+                            "required":true
+                          },
+                          {
+                            "name":"value",
+                            "type":"text",
+                            "label":"New value"
+                          },
+                          {
+                            "name":"global",
+                            "type":"boolean",
+                            "label":"Global match",
+                            "required":true
+                          },
+                          {
+                            "name":"sensitive",
+                            "type":"boolean",
+                            "label":"Case sensitive",
+                            "required":true
+                          },
+                          {
+                            "name":"multiline",
+                            "type":"boolean",
+                            "label":"Multiline",
+                            "required":true
+                          },
+                          {
+                            "name":"singleline",
+                            "type":"boolean",
+                            "label":"Singleline",
+                            "required":true
+                          },
+                          {
+                            "name":"text",
+                            "type":"text",
+                            "label":"Text"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id":41,
+                      "module":"util:FunctionSleep",
+                      "version":1,
+                      "parameters":{},
+                      "mapper":{
+                        "duration":"5"
+                      },
+                      "metadata":{
+                        "designer":{
+                          "x":2400,
+                          "y":450,
+                          "name":"delay 5 sec"
+                        },
+                        "expect":[
+                          {
+                            "name":"duration",
+                            "type":"uinteger",
+                            "label":"Delay",
+                            "required":true,
+                            "validate":{
+                              "max":300,
+                              "min":1
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id":28,
+                      "module":"anthropic-claude:createAMessage",
+                      "version":1,
+                      "parameters":{
+                        "__IMTCONN__":4517420
+                      },
+                      "mapper":{
+                        "model":"claude-sonnet-4-20250514",
+                        "system":"## HARD Rules (must follow)\n\n-- OUTPUT RAW JSON ONLY — no markdown, no commentary, no code fences.\n\n-- Use exactly these top‑level keys: news, linkedin_activity, intelligence_score, intelligence_summary.\n\n-- Use exactly these item keys as in JSOn sample in User Prompt:\n\n    -- news: headline, publication_date, source_name, entity, url, summary\n\n    -- linkedin_activity: activity_type, date, entity, summary, url\n\n    -- entity must be \"company\" for news items and typically \"contact\" for LinkedIn items (use \"contact\" unless evidence shows it is company-authored).\n\n-- Dates must be YYYY-MM-DD (ISO). If unknown, use \"UNKNOWN\".\n\n-- Limit to max 3 items in each of news and linkedin_activity.\n\n-- summary is a single concise string (not an array). Keep it ≤500 chars; compress to short factual sentences.\n\n\n##Scoring (always present)\n\n-- Compute intelligence_score using:\n\n-- breakdown.recency (0–4) → weight 0.4\n\n0–90d: 4; 91–200d: 3; >200d/unknown: 2; none: 0\n\n-- breakdown.source_reliability (0–4) → weight 0.4\n\n4: filings/official PR/major business press; 3: reputable industry press; 2: local/regional; 1: blogs/aggregators; 0: none/unknown\n\nbreakdown.linkedin_activity (0–2) → weight 0.2\n\n2: activity ≤30d; 1: 31–90d; 0: none/unknown\n\nscore = round( recency*0.4 + source_reliability*0.4 + linkedin_activity*0.2 )\n\n-- If items are missing or unverifiable, set score: 1 and explain briefly in description.\n\n\n## Procedure (internal)\n\n-- Find JSON between the first { and last }; if present, parse and remap keys to the schema (entity_type→entity, arrays of bullets → single summary string).\n\n-- If JSON is truncated or absent, extract candidates with patterns (headline/date/source/url/post types) and rebuild objects.\n\n-- Strip HTML, dedupe, enforce caps/sorting, compress summaries, ensure ISO dates or \"UNKNOWN\".",
+                        "messages":[
+                          {
+                            "role":"user",
+                            "content":[
+                              {
+                                "text":"You are an expert analyst that repairs and normalizes noisy Perplexity output into a strict JSON schema for outreach personalization and M&A notes.\n\n## Inputs\nA single raw text blob from Perplexity that may include analysis, partial JSON, HTML, or truncated content.\n\n{{3.choices[1].message.content}}\n\n## Your Role:\n-- Extract company news and contact LinkedIn activity from the text (if present).\n\n-- Normalize to the exact schema below, with strict keys, ISO dates, sorted newest→oldest, and no duplicates.\n\n-- Sanitize: remove HTML tags, code fences, backticks, unicode escapes like \\n, and excessive whitespace.\n\n-- Fill missing sections with empty arrays and still compute an intelligence_score (fallback score = 1).\n\n-- When any field is unknown, set it to \"UNKNOWN\" and still compute intelligence score. \n\n## Context to understand Perplexity Output:\n** Output Sections **\r\n  1. RECENT_NEWS_EVENTS  \r\n  2. LINKEDIN_ACTIVITY  \r\n  3. DATA_CONFIDENCE_SCORE  \r\n  4. INTELLIGENCE_SUMMARY\r\n\r\n---  \r\n**RECENT_NEWS_EVENTS**  \r\n* For each item, include:\r\n  - entity_type (“company”)  \r\n  - headline  \r\n  - date  \r\n  - source name\r\n  - URL  \r\n  - three-sentence factual summary  \r\n\r\n---  \r\n**LINKEDIN_ACTIVITY**  \r\n* Pull the top 3 public activities for the primary contact (entity_type: “contact”) in the same recency window.  \r\n* For each activity, include:\r\n  - activity_type (post/comment/share)  \r\n  - date  \r\n  - summary  \r\n  - URL  \r\n\r\n---  \r\n**DATA_CONFIDENCE_SCORE**  \r\n* Assign a Perplexity Intelligence Score (1–10) using weights:  \r\n  - News Recency: 40%  \r\n  - News Source reliability: 45%  \r\n  - LinkedIn activity and its recency: 15%  \r\n* Clearly list:\r\n  - raw sub-scores (e.g. Recency: 3/4)  \r\n  - weighting  \r\n  - final rounded score\n* one-sentence score description\r\n---  \r\n**INTELLIGENCE_SUMMARY**  \r\n- 5–6 bullet points highlighting deal-relevant signals:\r\n  - Recent financial or strategic moves  \r\n  - Event dates & locations  \r\n  - Partnerships, leadership changes, or succession cues  \r\n  - Expansion or contraction signals  \r\n  - Outreach-readiness indicators  \r\n  - **For each bullet, include: Event/Fact → Date → Relevance**\r\n- Keep each bullet under 250 characters.\n\n## OUTPUT MUST STRICTLY be in JSON format as below:\n\n```{\r\n  \"news\": [\r\n    {\r\n      \"headline\": \"Acme Corp Raises $25M in Series B Funding\",\r\n      \"publication_date\": \"2025-07-10\",\r\n      \"source_name\": \"TechCrunch\",\r\n      \"entity\": \"company\",\r\n      \"url\": \"https://techcrunch.com/acme-series-b\",\r\n      \"summary\": \"Acme Corp secured $25 million in Series B financing led by Venture Partners to expand its AI-powered analytics platform.\"\r\n    },\r\n    {\r\n      \"headline\": \"Acme Corp Launches New Mobile App\",\r\n      \"publication_date\": \"2025-06-28\",\r\n      \"source_name\": \"Business Insider\",\r\n      \"entity\": \"company\",\r\n      \"url\": \"https://businessinsider.com/acme-mobile-app\",\r\n      \"summary\": \"Acme Corp rolled out a redesigned mobile application that integrates real-time collaboration features for enterprise users.\"\r\n    }\r\n  ],\r\n  \"linkedin_activity\": [\r\n    {\r\n      \"activity_type\": \"post\",\r\n      \"date\": \"2025-07-15\",\r\n      \"entity\": \"contact\",\r\n      \"summary\": \"Shared insights on the future of AI in small-business automation, highlighting three key trends.\",\r\n      \"url\": \"https://www.linkedin.com/posts/jane-doe_ai-automation-smallbiz-activity-12345\"\r\n    },\r\n    {\r\n      \"activity_type\": \"comment\",\r\n      \"date\": \"2025-07-12\",\r\n      \"entity\": \"company\",\r\n      \"summary\": \"Commented on a peer’s post about data privacy, noting the importance of end-to-end encryption.\",\r\n      \"url\": \"https://www.linkedin.com/feed/update/urn:li:activity:67890\"\r\n    }\r\n  ],\r\n \"intelligence_score\": {\r\n    \"score\": 8,\r\n    \"breakdown\": {\r\n      \"recency\": 3,\r\n      \"source_reliability\": 4,\r\n      \"linkedin_activity\": 1\r\n    },\r\n    \"weights\": {\r\n      \"recency\": 0.4,\r\n      \"source_reliability\": 0.45,\r\n      \"linkedin_activity\": 0.15\r\n    },\n \"description\": \"News recency score reflects that both events fell outside strict 30-day window but within 90-day range. Source reliability is high as primary information comes directly from company-controlled channels\"\n},\r\n  \"intelligence_summary\": [\r\n    \"Secured $25M Series B funding – 2025-07-10 – signals growth capital availability.\",\r\n    \"Mobile app launch – 2025-06-28 – potential expansion in enterprise tools.\",\r\n    \"CEO active on LinkedIn discussing AI trends – 2025-07-15 – aligns with industry transformation.\",\r\n    \"No leadership changes detected in past year – stability in management.\",\r\n    \"Strong engagement with industry news – supports warm outreach.\"\r\n  ]\r\n}\r\n```\n",
+                                "type":"text"
+                              }
+                            ]
+                          }
+                        ],
+                        "max_tokens":"3000",
+                        "temperature":"1"
+                      },
+                      "metadata":{
+                        "designer":{
+                          "x":2700,
+                          "y":450,
+                          "name":"extract JSON"
+                        },
+                        "parameters":[
+                          {
+                            "name":"__IMTCONN__",
+                            "type":"account:anthropic-claude",
+                            "label":"Connection",
+                            "required":true
+                          }
+                        ],
+                        "expect":[
+                          {
+                            "name":"model",
+                            "type":"select",
+                            "label":"Model",
+                            "required":true
+                          },
+                          {
+                            "name":"max_tokens",
+                            "type":"uinteger",
+                            "label":"Max Tokens",
+                            "required":true
+                          },
+                          {
+                            "name":"messages",
+                            "spec":{
+                              "name":"value",
+                              "spec":[
+                                {
+                                  "name":"role",
+                                  "type":"select",
+                                  "label":"Role",
+                                  "options":[
+                                    {
+                                      "label":"User",
+                                      "value":"user",
+                                      "nested":[
+                                        {
+                                          "name":"content",
+                                          "spec":{
+                                            "spec":[
+                                              {
+                                                "help":"For models that support image content blocks (vision), see the [Anthropic model comparison table](https://docs.anthropic.com/en/docs/about-claude/models#model-comparison-table).",
+                                                "name":"type",
+                                                "type":"select",
+                                                "label":"Type",
+                                                "options":[
+                                                  {
+                                                    "label":"Text",
+                                                    "value":"text",
+                                                    "nested":[
+                                                      {
+                                                        "help":"Content of the message on behalf of the selected **Role** .",
+                                                        "name":"text",
+                                                        "type":"text",
+                                                        "label":"Text",
+                                                        "required":true
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "label":"Image",
+                                                    "value":"image",
+                                                    "nested":[
+                                                      {
+                                                        "name":"source",
+                                                        "spec":[
+                                                          {
+                                                            "help":"File name, including the extension, for example, `image.jpg`.",
+                                                            "name":"filename",
+                                                            "type":"filename",
+                                                            "label":"Filename",
+                                                            "required":true,
+                                                            "semantic":"file:name",
+                                                            "extension":[
+                                                              "jpeg",
+                                                              "jpg",
+                                                              "png",
+                                                              "gif",
+                                                              "webp"
+                                                            ]
+                                                          },
+                                                          {
+                                                            "help":"Binary data of the image. For example, you can retrieve the binary data of your image using the **HTTP: Get a file** module.",
+                                                            "name":"data",
+                                                            "type":"buffer",
+                                                            "label":"Data",
+                                                            "required":true,
+                                                            "semantic":"file:data"
+                                                          }
+                                                        ],
+                                                        "type":"collection",
+                                                        "label":"Source",
+                                                        "required":true
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "label":"PDF document",
+                                                    "value":"document",
+                                                    "nested":[
+                                                      "rpc://anthropic-claude/1/notePdfDocument",
+                                                      {
+                                                        "name":"pdfFileName",
+                                                        "type":"filename",
+                                                        "label":"Filename",
+                                                        "required":true,
+                                                        "semantic":"file:name",
+                                                        "extension":[
+                                                          "pdf"
+                                                        ]
+                                                      },
+                                                      {
+                                                        "name":"pdfFileData",
+                                                        "type":"buffer",
+                                                        "label":"Data",
+                                                        "required":true,
+                                                        "semantic":"file:data"
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "label":"Tool result",
+                                                    "value":"tool_result",
+                                                    "nested":[
+                                                      {
+                                                        "name":"tool_use_id",
+                                                        "type":"text",
+                                                        "label":"Tool Use ID",
+                                                        "required":true
+                                                      },
+                                                      {
+                                                        "name":"content",
+                                                        "type":"text",
+                                                        "label":"Content",
+                                                        "required":true
+                                                      }
+                                                    ]
+                                                  }
+                                                ],
+                                                "required":true
+                                              }
+                                            ],
+                                            "type":"collection",
+                                            "label":"Content"
+                                          },
+                                          "type":"array",
+                                          "label":"Content",
+                                          "labels":{
+                                            "add":"Add content"
+                                          },
+                                          "required":true
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "label":"Assistant",
+                                      "value":"assistant",
+                                      "nested":[
+                                        {
+                                          "help":"If the request ends with an assistant turn, then the response content will continue directly from that last turn.",
+                                          "name":"content",
+                                          "type":"text",
+                                          "label":"Content",
+                                          "required":true
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "label":"Tool Assistant",
+                                      "value":"tool_assistant",
+                                      "nested":[
+                                        {
+                                          "name":"content",
+                                          "spec":{
+                                            "spec":[
+                                              {
+                                                "help":"You can send image content blocks starting with Claude 3 models.",
+                                                "name":"type",
+                                                "type":"select",
+                                                "label":"Type",
+                                                "options":[
+                                                  {
+                                                    "label":"Text",
+                                                    "value":"text",
+                                                    "nested":[
+                                                      {
+                                                        "help":"Content of the message on behalf of the selected **Role** .",
+                                                        "name":"text",
+                                                        "type":"text",
+                                                        "label":"Text",
+                                                        "required":true
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "label":"Tool Use",
+                                                    "value":"tool_use",
+                                                    "nested":[
+                                                      {
+                                                        "name":"id",
+                                                        "type":"text",
+                                                        "label":"Tool Use ID",
+                                                        "required":true
+                                                      },
+                                                      {
+                                                        "name":"name",
+                                                        "type":"text",
+                                                        "label":"Tool Name",
+                                                        "required":true
+                                                      },
+                                                      {
+                                                        "name":"input",
+                                                        "type":"any",
+                                                        "label":"Input",
+                                                        "required":true
+                                                      }
+                                                    ]
+                                                  }
+                                                ],
+                                                "required":true
+                                              }
+                                            ],
+                                            "type":"collection",
+                                            "label":"Content"
+                                          },
+                                          "type":"array",
+                                          "label":"Content",
+                                          "labels":{
+                                            "add":"Add content"
+                                          },
+                                          "required":true
+                                        }
+                                      ]
+                                    }
+                                  ],
+                                  "required":true
+                                }
+                              ],
+                              "type":"collection",
+                              "label":"Message"
+                            },
+                            "type":"array",
+                            "label":"Messages",
+                            "required":true
+                          },
+                          {
+                            "name":"system",
+                            "type":"text",
+                            "label":"System Prompt"
+                          },
+                          {
+                            "name":"metadata",
+                            "spec":[
+                              {
+                                "name":"user_id",
+                                "type":"text",
+                                "label":"User ID"
+                              }
+                            ],
+                            "type":"collection",
+                            "label":"Metadata"
+                          },
+                          {
+                            "name":"stop_sequences",
+                            "spec":{
+                              "name":"value",
+                              "type":"text",
+                              "label":"Stop Sequence"
+                            },
+                            "type":"array",
+                            "label":"Stop Sequences"
+                          },
+                          {
+                            "name":"temperature",
+                            "type":"number",
+                            "label":"Temperature",
+                            "validate":{
+                              "max":1,
+                              "min":0
+                            }
+                          },
+                          {
+                            "name":"top_p",
+                            "type":"number",
+                            "label":"Top P",
+                            "validate":{
+                              "max":1
+                            }
+                          },
+                          {
+                            "name":"top_k",
+                            "type":"uinteger",
+                            "label":"Top K"
+                          },
+                          {
+                            "name":"additionalParameters",
+                            "spec":{
+                              "name":"value",
+                              "spec":[
+                                {
+                                  "name":"key",
+                                  "type":"text",
+                                  "label":"Parameter Name",
+                                  "required":true
+                                },
+                                {
+                                  "name":"type",
+                                  "type":"select",
+                                  "label":"Input Type",
+                                  "options":[
+                                    {
+                                      "label":"Text",
+                                      "value":"text",
+                                      "nested":[
+                                        {
+                                          "name":"value",
+                                          "type":"text",
+                                          "label":"Parameter Value"
+                                        }
+                                      ],
+                                      "default":true
+                                    },
+                                    {
+                                      "label":"Number",
+                                      "value":"number",
+                                      "nested":[
+                                        {
+                                          "name":"value",
+                                          "type":"number",
+                                          "label":"Parameter Value"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "label":"Boolean",
+                                      "value":"boolean",
+                                      "nested":[
+                                        {
+                                          "name":"value",
+                                          "type":"boolean",
+                                          "label":"Parameter Value"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "label":"Date",
+                                      "value":"date",
+                                      "nested":[
+                                        {
+                                          "name":"value",
+                                          "type":"date",
+                                          "label":"Parameter Value"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "label":"Tools",
+                                      "value":"tools",
+                                      "nested":[
+                                        {
+                                          "name":"value",
+                                          "spec":{
+                                            "type":"text",
+                                            "label":"Parameter Value"
+                                          },
+                                          "type":"array",
+                                          "label":"Parameter Values",
+                                          "labels":{
+                                            "add":"Add parameter value"
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "label":"Any",
+                                      "value":"any",
+                                      "nested":[
+                                        {
+                                          "name":"value",
+                                          "type":"any",
+                                          "label":"Parameter Value"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "type":"collection",
+                              "label":"Input Parameter"
+                            },
+                            "type":"array",
+                            "label":"Other Input Parameters"
+                          }
+                        ],
+                        "advanced":true
+                      }
+                    },
+                    {
+                      "id":11,
+                      "module":"json:ParseJSON",
+                      "version":1,
+                      "parameters":{
+                        "type":150366
+                      },
+                      "mapper":{
+                        "json":"{{28.textResponse}}"
+                      },
+                      "metadata":{
+                        "designer":{
+                          "x":3000,
+                          "y":450
+                        },
+                        "parameters":[
+                          {
+                            "name":"type",
+                            "type":"udt",
+                            "label":"Data structure"
+                          }
+                        ],
+                        "expect":[
+                          {
+                            "name":"json",
+                            "type":"text",
+                            "label":"JSON string",
+                            "required":true
+                          }
+                        ]
+                      },
+                      "onerror":[
+                        {
+                          "id":31,
+                          "module":"builtin:Resume",
+                          "version":1,
+                          "parameters":{},
+                          "mapper":{
+                            "news":[
+                              {
+                                "url":"",
+                                "source":"",
+                                "summary":"Unknown",
+                                "headline":"Unknown",
+                                "entity_type":"",
+                                "publication_date":""
+                              }
+                            ],
+                            "linkedin_activity":[
+                              {
+                                "url":"",
+                                "date":"",
+                                "summary":"Unknown",
+                                "activity_type":""
+                              }
+                            ],
+                            "intelligence_score":{
+                              "score":"1",
+                              "weights":{
+                                "recency":"",
+                                "linkedin_activity":"",
+                                "source_reliability":""
+                              },
+                              "breakdown":{
+                                "recency":"",
+                                "linkedin_activity":"",
+                                "source_reliability":""
+                              },
+                              "description":"No vallid data found"
+                            },
+                            "intelligence_summary":[
+                              "Unknown"
+                            ]
+                          },
+                          "metadata":{
+                            "designer":{
+                              "x":3300,
+                              "y":900
+                            },
+                            "expect":[
+                              {
+                                "name":"news",
+                                "spec":{
+                                  "name":"value",
+                                  "spec":[
+                                    {
+                                      "name":"entity_type",
+                                      "type":"text",
+                                      "label":null
+                                    },
+                                    {
+                                      "name":"headline",
+                                      "type":"text",
+                                      "label":null
+                                    },
+                                    {
+                                      "name":"publication_date",
+                                      "type":"text",
+                                      "label":null
+                                    },
+                                    {
+                                      "name":"source",
+                                      "type":"text",
+                                      "label":null
+                                    },
+                                    {
+                                      "name":"url",
+                                      "type":"text",
+                                      "label":null
+                                    },
+                                    {
+                                      "name":"summary",
+                                      "type":"text",
+                                      "label":null
+                                    }
+                                  ],
+                                  "type":"collection"
+                                },
+                                "type":"array",
+                                "label":"News"
+                              },
+                              {
+                                "name":"linkedin_activity",
+                                "spec":{
+                                  "name":"value",
+                                  "spec":[
+                                    {
+                                      "name":"activity_type",
+                                      "type":"text",
+                                      "label":null
+                                    },
+                                    {
+                                      "name":"date",
+                                      "type":"text",
+                                      "label":null
+                                    },
+                                    {
+                                      "name":"summary",
+                                      "type":"text",
+                                      "label":null
+                                    },
+                                    {
+                                      "name":"url",
+                                      "type":"text",
+                                      "label":null
+                                    }
+                                  ],
+                                  "type":"collection"
+                                },
+                                "type":"array",
+                                "label":"Linkedin Activity"
+                              },
+                              {
+                                "name":"intelligence_score",
+                                "spec":[
+                                  {
+                                    "name":"score",
+                                    "type":"number",
+                                    "label":null
+                                  },
+                                  {
+                                    "name":"breakdown",
+                                    "spec":[
+                                      {
+                                        "name":"recency",
+                                        "type":"number",
+                                        "label":null
+                                      },
+                                      {
+                                        "name":"source_reliability",
+                                        "type":"number",
+                                        "label":null
+                                      },
+                                      {
+                                        "name":"linkedin_activity",
+                                        "type":"number",
+                                        "label":null
+                                      }
+                                    ],
+                                    "type":"collection",
+                                    "label":null
+                                  },
+                                  {
+                                    "name":"weights",
+                                    "spec":[
+                                      {
+                                        "name":"recency",
+                                        "type":"number",
+                                        "label":null
+                                      },
+                                      {
+                                        "name":"source_reliability",
+                                        "type":"number",
+                                        "label":null
+                                      },
+                                      {
+                                        "name":"linkedin_activity",
+                                        "type":"number",
+                                        "label":null
+                                      }
+                                    ],
+                                    "type":"collection",
+                                    "label":null
+                                  },
+                                  {
+                                    "name":"description",
+                                    "type":"text",
+                                    "label":null
+                                  }
+                                ],
+                                "type":"collection",
+                                "label":"Intelligence Score"
+                              },
+                              {
+                                "name":"intelligence_summary",
+                                "spec":{
+                                  "name":"value",
+                                  "type":"text"
+                                },
+                                "type":"array",
+                                "label":"Intelligence Summary"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id":33,
+                      "module":"builtin:BasicRouter",
+                      "version":1,
+                      "mapper":null,
+                      "metadata":{
+                        "designer":{
+                          "x":3300,
+                          "y":300
+                        }
+                      },
+                      "routes":[
+                        {
+                          "flow":[
+                            {
+                              "id":17,
+                              "module":"airtable:ActionUpdateRecords",
+                              "version":3,
+                              "parameters":{
+                                "__IMTCONN__":4480979
+                              },
+                              "filter":{
+                                "name":"score >=0",
+                                "conditions":[]
+                              },
+                              "mapper":{
+                                "id":"{{1.id}}",
+                                "base":"{{airtableBaseId}}",
+                                "table":"{{airtableTableId1}}",
+                                "record":{
+                                  "{{fieldId1}}":true,
+                                  "{{fieldId2}}":"{{11.intelligence_score.score}}",
+                                  "{{fieldId3}}":"`{{28.textResponse}}`",
+                                  "{{fieldId4}}":"{{11.intelligence_summary[1]}}",
+                                  "{{fieldId5}}":"{{11.intelligence_score.description}}",
+                                  "{{fieldId6}}":"{{11.news[1].publication_date}}",
+                                  "{{fieldId7}}":"# News\n## {{11.news[1].headline}}\n{{11.news[1].summary}}\n[Source Url]({{11.news[1].url}})\n\n# LinkedIn Activity\n{{11.linkedin_activity[1].summary}}",
+                                  "{{fieldId8}}":"{{3.citations[1]}}"
+                                },
+                                "typecast":false,
+                                "useColumnId":false
+                              },
+                              "metadata":{
+                                "designer":{
+                                  "x":3600,
+                                  "y":0,
+                                  "name":"update Intelligence Info"
+                                },
+                                "parameters":[
+                                  {
+                                    "name":"__IMTCONN__",
+                                    "type":"account:airtable3,airtable2",
+                                    "label":"Connection",
+                                    "required":true
+                                  }
+                                ],
+                                "expect":[
+                                  {
+                                    "name":"base",
+                                    "type":"select",
+                                    "label":"Base",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"typecast",
+                                    "type":"boolean",
+                                    "label":"Smart links",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"useColumnId",
+                                    "type":"boolean",
+                                    "label":"Use Column ID",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"table",
+                                    "type":"select",
+                                    "label":"Table",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"id",
+                                    "type":"text",
+                                    "label":"Record ID",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"record",
+                                    "spec":[
+                                      {
+                                        "name":"{{fieldId19}}",
+                                        "type":"text",
+                                        "label":"First Name"
+                                      },
+                                      {
+                                        "name":"{{fieldId20}}",
+                                        "type":"text",
+                                        "label":"Last Name"
+                                      },
+                                      {
+                                        "name":"{{fieldId21}}",
+                                        "type":"text",
+                                        "label":"Executive Title"
+                                      },
+                                      {
+                                        "name":"{{fieldId22}}",
+                                        "type":"text",
+                                        "label":"Work Email"
+                                      },
+                                      {
+                                        "mode":"edit",
+                                        "name":"{{fieldId17}}",
+                                        "type":"select",
+                                        "label":"NeverBounce Status"
+                                      },
+                                      {
+                                        "name":"{{fieldId23}}",
+                                        "type":"text",
+                                        "label":"LinkedIn"
+                                      },
+                                      {
+                                        "name":"{{fieldId13}}",
+                                        "spec":{
+                                          "name":"value",
+                                          "label":"Record ID"
+                                        },
+                                        "type":"array",
+                                        "label":"Company"
+                                      },
+                                      {
+                                        "name":"{{fieldId7}}",
+                                        "type":"text",
+                                        "label":"Recent Business Activity"
+                                      },
+                                      {
+                                        "name":"{{fieldId18}}",
+                                        "type":"boolean",
+                                        "label":"Test Leads"
+                                      },
+                                      {
+                                        "name":"{{fieldId4}}",
+                                        "type":"text",
+                                        "label":"AI Activity Summary"
+                                      },
+                                      {
+                                        "name":"{{fieldId24}}",
+                                        "type":"text",
+                                        "label":"Seniority"
+                                      },
+                                      {
+                                        "name":"{{fieldId25}}",
+                                        "type":"text",
+                                        "label":"Department"
+                                      },
+                                      {
+                                        "name":"{{fieldId26}}",
+                                        "time":false,
+                                        "type":"date",
+                                        "label":"Job Start"
+                                      },
+                                      {
+                                        "name":"{{fieldId6}}",
+                                        "type":"text",
+                                        "label":"Recent Activity Date"
+                                      },
+                                      {
+                                        "name":"{{fieldId16}}",
+                                        "spec":{
+                                          "name":"value",
+                                          "label":"Record ID"
+                                        },
+                                        "type":"array",
+                                        "label":"Campaign Assigned To"
+                                      },
+                                      {
+                                        "mode":"edit",
+                                        "name":"{{fieldId12}}",
+                                        "type":"select",
+                                        "label":"Lead Status"
+                                      },
+                                      {
+                                        "name":"{{fieldId2}}",
+                                        "type":"number",
+                                        "label":"Data Intelligence Score"
+                                      },
+                                      {
+                                        "name":"{{fieldId27}}",
+                                        "type":"text",
+                                        "label":"NeverBounce Flag"
+                                      },
+                                      {
+                                        "mode":"edit",
+                                        "name":"{{fieldId14}}",
+                                        "type":"select",
+                                        "label":"Email Status"
+                                      },
+                                      {
+                                        "name":"{{fieldId1}}",
+                                        "type":"boolean",
+                                        "label":"Apollo Enriched"
+                                      },
+                                      {
+                                        "name":"{{fieldId28}}",
+                                        "type":"text",
+                                        "label":"Apollo PersonID"
+                                      },
+                                      {
+                                        "name":"{{fieldId8}}",
+                                        "type":"text",
+                                        "label":"Citations"
+                                      },
+                                      {
+                                        "name":"{{fieldId5}}",
+                                        "type":"text",
+                                        "label":"Intelligence Score Description"
+                                      },
+                                      {
+                                        "name":"{{fieldId3}}",
+                                        "type":"text",
+                                        "label":"Raw JSON"
+                                      },
+                                      {
+                                        "mode":"edit",
+                                        "name":"{{fieldId9}}",
+                                        "type":"select",
+                                        "label":"Enrichment Source"
+                                      },
+                                      {
+                                        "name":"{{fieldId11}}",
+                                        "spec":{
+                                          "name":"value",
+                                          "label":"Record ID"
+                                        },
+                                        "type":"array",
+                                        "label":"AI Generated Messages"
+                                      },
+                                      {
+                                        "name":"{{fieldId29}}",
+                                        "type":"text",
+                                        "label":"Salesflare ContactID"
+                                      },
+                                      {
+                                        "name":"{{fieldId10}}",
+                                        "type":"boolean",
+                                        "label":"Approve Low Priority"
+                                      },
+                                      {
+                                        "name":"{{fieldId30}}",
+                                        "type":"text",
+                                        "label":"Apollo Contact ID"
+                                      },
+                                      {
+                                        "name":"{{fieldId15}}",
+                                        "type":"boolean",
+                                        "label":"Is Paused"
+                                      }
+                                    ],
+                                    "type":"collection",
+                                    "label":"Record"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "flow":[
+                            {
+                              "id":34,
+                              "module":"http:ActionSendDataAPIKeyAuth",
+                              "version":3,
+                              "parameters":{
+                                "auth":47210,
+                                "handleErrors":false,
+                                "useNewZLibDeCompress":true
+                              },
+                              "filter":{
+                                "name":"score < 3",
+                                "conditions":[
+                                  [
+                                    {
+                                      "a":"{{11.intelligence_score.score}}",
+                                      "b":"5",
+                                      "o":"number:less"
+                                    }
+                                  ]
+                                ]
+                              },
+                              "mapper":{
+                                "ca":"",
+                                "qs":[],
+                                "url":"https://api.apollo.io/api/v1/news_articles/search?organization_ids[]={{2.`Apollo orgID`}}",
+                                "gzip":true,
+                                "method":"post",
+                                "headers":[],
+                                "timeout":"",
+                                "useMtls":false,
+                                "bodyType":"",
+                                "serializeUrl":false,
+                                "shareCookies":false,
+                                "parseResponse":true,
+                                "followRedirect":true,
+                                "useQuerystring":false,
+                                "followAllRedirects":false,
+                                "rejectUnauthorized":true
+                              },
+                              "metadata":{
+                                "designer":{
+                                  "x":3600,
+                                  "y":450,
+                                  "name":"get Apollo News"
+                                },
+                                "parameters":[
+                                  {
+                                    "name":"auth",
+                                    "type":"keychain:apikeyauth",
+                                    "label":"Credentials",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"handleErrors",
+                                    "type":"boolean",
+                                    "label":"Evaluate all states as errors (except for 2xx and 3xx )",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"useNewZLibDeCompress",
+                                    "type":"hidden"
+                                  }
+                                ],
+                                "expect":[
+                                  {
+                                    "name":"url",
+                                    "type":"url",
+                                    "label":"URL",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"serializeUrl",
+                                    "type":"boolean",
+                                    "label":"Serialize URL",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"method",
+                                    "type":"select",
+                                    "label":"Method",
+                                    "required":true,
+                                    "validate":{
+                                      "enum":[
+                                        "get",
+                                        "head",
+                                        "post",
+                                        "put",
+                                        "patch",
+                                        "delete",
+                                        "options"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "name":"headers",
+                                    "spec":[
+                                      {
+                                        "name":"name",
+                                        "type":"text",
+                                        "label":"Name",
+                                        "required":true
+                                      },
+                                      {
+                                        "name":"value",
+                                        "type":"text",
+                                        "label":"Value"
+                                      }
+                                    ],
+                                    "type":"array",
+                                    "label":"Headers"
+                                  },
+                                  {
+                                    "name":"qs",
+                                    "spec":[
+                                      {
+                                        "name":"name",
+                                        "type":"text",
+                                        "label":"Name",
+                                        "required":true
+                                      },
+                                      {
+                                        "name":"value",
+                                        "type":"text",
+                                        "label":"Value"
+                                      }
+                                    ],
+                                    "type":"array",
+                                    "label":"Query String"
+                                  },
+                                  {
+                                    "name":"bodyType",
+                                    "type":"select",
+                                    "label":"Body type",
+                                    "validate":{
+                                      "enum":[
+                                        "raw",
+                                        "x_www_form_urlencoded",
+                                        "multipart_form_data"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "name":"parseResponse",
+                                    "type":"boolean",
+                                    "label":"Parse response",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"timeout",
+                                    "type":"uinteger",
+                                    "label":"Timeout",
+                                    "validate":{
+                                      "max":300,
+                                      "min":1
+                                    }
+                                  },
+                                  {
+                                    "name":"shareCookies",
+                                    "type":"boolean",
+                                    "label":"Share cookies with other HTTP modules",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"ca",
+                                    "type":"cert",
+                                    "label":"Self-signed certificate"
+                                  },
+                                  {
+                                    "name":"rejectUnauthorized",
+                                    "type":"boolean",
+                                    "label":"Reject connections that are using unverified (self-signed) certificates",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"followRedirect",
+                                    "type":"boolean",
+                                    "label":"Follow redirect",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"useQuerystring",
+                                    "type":"boolean",
+                                    "label":"Disable serialization of multiple same query string keys as arrays",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"gzip",
+                                    "type":"boolean",
+                                    "label":"Request compressed content",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"useMtls",
+                                    "type":"boolean",
+                                    "label":"Use Mutual TLS",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"followAllRedirects",
+                                    "type":"boolean",
+                                    "label":"Follow all redirect",
+                                    "required":true
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "id":35,
+                              "module":"anthropic-claude:createAMessage",
+                              "version":1,
+                              "parameters":{
+                                "__IMTCONN__":4517420
+                              },
+                              "filter":{
+                                "name":"contains news",
+                                "conditions":[
+                                  [
+                                    {
+                                      "a":"{{keys(34.data)}}",
+                                      "b":"news_articles",
+                                      "o":"array:contain"
+                                    },
+                                    {
+                                      "a":"{{34.data.news_articles}}",
+                                      "b":"0",
+                                      "o":"array:greater"
+                                    }
+                                  ]
+                                ]
+                              },
+                              "mapper":{
+                                "model":"claude-sonnet-4-20250514",
+                                "system":"## HARD Rules (must follow)\n\n-- OUTPUT RAW JSON ONLY — no markdown, no commentary, no code fences.\n\n-- Use exactly these top‑level keys: news, linkedin_activity, intelligence_score, intelligence_summary.\n\n-- Use exactly these item keys as in JSOn sample in User Prompt:\n\n    -- news: headline, publication_date, source_name, entity, url, summary\n\n    -- linkedin_activity: activity_type, date, entity, summary, url\n\n    -- entity must be \"company\" for news items and typically \"contact\" for LinkedIn items (use \"contact\" unless evidence shows it is company-authored).\n\n-- Dates must be YYYY-MM-DD (ISO). If unknown, use \"UNKNOWN\".\n\n-- Limit to max 3 items in each of news and linkedin_activity.\n\n-- summary is a single concise string (not an array). Keep it ≤500 chars; compress to short factual sentences.\n\n\n##Scoring (always present)\n\n-- Compute intelligence_score using:\n\n-- breakdown.recency (0–4) → weight 0.4\n\n0–30d: 4; 31–90d: 3; 91–200d: 2; >200d/unknown: 1; none: 0\n\n-- breakdown.source_reliability (0–4) → weight 0.4\n\n4: filings/official PR/major business press; 3: reputable industry press; 2: local/regional; 1: blogs/aggregators; 0: none/unknown\n\nbreakdown.linkedin_activity (0–2) → weight 0.2\n\n2: activity ≤30d; 1: 31–90d; 0: none/unknown\n\nscore = round( recency*0.4 + source_reliability*0.4 + linkedin_activity*0.2 )\n\n-- If items are missing or unverifiable, set score: 1 and explain briefly in description.\n\n\n## Procedure (internal)\n\n-- Find JSON between the first { and last }; if present, parse and remap keys to the schema (entity_type→entity, arrays of bullets → single summary string).\n\n-- If JSON is truncated or absent, extract candidates with patterns (headline/date/source/url/post types) and rebuild objects.\n\n-- Strip HTML, dedupe, enforce caps/sorting, compress summaries, ensure ISO dates or \"UNKNOWN\".",
+                                "messages":[
+                                  {
+                                    "role":"user",
+                                    "content":[
+                                      {
+                                        "text":"You are an expert analyst that changes input JSON provided into a strict JSON schema for outreach personalization and M&A notes.\n\n#About Company:\n- Company LinkedIn : {{2.`Company LinkedIn`}}  \r\n- Company Domain  : {{2.Domain}}  \r\n- Industry     : {{2.Vertical}}  \r\n- Headquarters   : {{2.Headquarters}}  \n\n## Inputs\nA single raw JSON from APOLLO News :\n```{{34.data.news_articles}}```\n\n\n## Your Role:\n-- Extract company news and contact LinkedIn activity from the text (if present).\n\n-- Normalize to the exact schema below, with strict keys, ISO dates, sorted newest→oldest, and no duplicates.\n\n-- Sanitize: remove HTML tags, code fences, backticks, unicode escapes like \\n, and excessive whitespace.\n\n-- Fill missing sections with empty arrays and still compute an intelligence_score (fallback score = 1).\n\n-- When any field is unknown, set it to \"UNKNOWN\" and still compute intelligence score. \n\n## Context to understand Perplexity Output:\n** Output Sections **\r\n  1. RECENT_NEWS_EVENTS  \r\n  2. LINKEDIN_ACTIVITY  \r\n  3. DATA_CONFIDENCE_SCORE  \r\n  4. INTELLIGENCE_SUMMARY\r\n\r\n---  \r\n**RECENT_NEWS_EVENTS**  \r\n* For each item, include:\r\n  - entity_type (“company”)  \r\n  - headline  \r\n  - date  \r\n  - source name\r\n  - URL  \r\n  - three-sentence factual summary  \r\n\r\n---  \r\n**LINKEDIN_ACTIVITY**  \r\n* Pull the top 3 public activities for the primary contact (entity_type: “contact”) in the same recency window.  \r\n* For each activity, include:\r\n  - activity_type (post/comment/share)  \r\n  - date  \r\n  - summary  \r\n  - URL  \r\n\r\n---  \r\n**DATA_CONFIDENCE_SCORE**  \r\n* Assign a Intelligence Score (1–10) using weights:  \r\n  - News Recency: 40%  \r\n  - News Source reliability: 40%  \r\n  - LinkedIn activity and its recency: 20%  \r\n* Clearly list:\r\n  - raw sub-scores (e.g. Recency: 3/4)  \r\n  - weighting  \r\n  - final rounded score\n* one-sentence score description\r\n---  \r\n**INTELLIGENCE_SUMMARY**  \r\n- 5–6 bullet points highlighting deal-relevant signals:\r\n  - Recent financial or strategic moves  \r\n  - Event dates & locations  \r\n  - Partnerships, leadership changes, or succession cues  \r\n  - Expansion or contraction signals  \r\n  - Outreach-readiness indicators  \r\n  - **For each bullet, include: Event/Fact → Date → Relevance**\r\n- Keep each bullet under 250 characters.\n\n## OUTPUT MUST STRICTLY be in JSON format as below:\n\n```{\r\n  \"news\": [\r\n    {\r\n      \"headline\": \"Acme Corp Raises $25M in Series B Funding\",\r\n      \"publication_date\": \"2025-07-10\",\r\n      \"source_name\": \"TechCrunch\",\r\n      \"entity\": \"company\",\r\n      \"url\": \"https://techcrunch.com/acme-series-b\",\r\n      \"summary\": \"Acme Corp secured $25 million in Series B financing led by Venture Partners to expand its AI-powered analytics platform.\"\r\n    },\r\n    {\r\n      \"headline\": \"Acme Corp Launches New Mobile App\",\r\n      \"publication_date\": \"2025-06-28\",\r\n      \"source_name\": \"Business Insider\",\r\n      \"entity\": \"company\",\r\n      \"url\": \"https://businessinsider.com/acme-mobile-app\",\r\n      \"summary\": \"Acme Corp rolled out a redesigned mobile application that integrates real-time collaboration features for enterprise users.\"\r\n    }\r\n  ],\r\n  \"linkedin_activity\": [\r\n    {\r\n      \"activity_type\": \"post\",\r\n      \"date\": \"2025-07-15\",\r\n      \"entity\": \"contact\",\r\n      \"summary\": \"Shared insights on the future of AI in small-business automation, highlighting three key trends.\",\r\n      \"url\": \"https://www.linkedin.com/posts/jane-doe_ai-automation-smallbiz-activity-12345\"\r\n    },\r\n    {\r\n      \"activity_type\": \"comment\",\r\n      \"date\": \"2025-07-12\",\r\n      \"entity\": \"company\",\r\n      \"summary\": \"Commented on a peer’s post about data privacy, noting the importance of end-to-end encryption.\",\r\n      \"url\": \"https://www.linkedin.com/feed/update/urn:li:activity:67890\"\r\n    }\r\n  ],\r\n \"intelligence_score\": {\r\n    \"score\": 8,\r\n    \"breakdown\": {\r\n      \"recency\": 3,\r\n      \"source_reliability\": 4,\r\n      \"linkedin_activity\": 1\r\n    },\r\n    \"weights\": {\r\n      \"recency\": 0.4,\r\n      \"source_reliability\": 0.4,\r\n      \"linkedin_activity\": 0.2\r\n    },\n \"description\": \"News recency score reflects that both events fell outside strict 30-day window but within 90-day range. Source reliability is high as primary information comes directly from company-controlled channels\"\n},\r\n  \"intelligence_summary\": [\r\n    \"Secured $25M Series B funding – 2025-07-10 – signals growth capital availability.\",\r\n    \"Mobile app launch – 2025-06-28 – potential expansion in enterprise tools.\",\r\n    \"CEO active on LinkedIn discussing AI trends – 2025-07-15 – aligns with industry transformation.\",\r\n    \"No leadership changes detected in past year – stability in management.\",\r\n    \"Strong engagement with industry news – supports warm outreach.\"\r\n  ]\r\n}\r\n```\n",
+                                        "type":"text"
+                                      }
+                                    ]
+                                  }
+                                ],
+                                "max_tokens":"3000",
+                                "temperature":"1"
+                              },
+                              "metadata":{
+                                "designer":{
+                                  "x":3900,
+                                  "y":450,
+                                  "name":"extract JSON"
+                                },
+                                "parameters":[
+                                  {
+                                    "name":"__IMTCONN__",
+                                    "type":"account:anthropic-claude",
+                                    "label":"Connection",
+                                    "required":true
+                                  }
+                                ],
+                                "expect":[
+                                  {
+                                    "name":"model",
+                                    "type":"select",
+                                    "label":"Model",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"max_tokens",
+                                    "type":"uinteger",
+                                    "label":"Max Tokens",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"messages",
+                                    "spec":{
+                                      "name":"value",
+                                      "spec":[
+                                        {
+                                          "name":"role",
+                                          "type":"select",
+                                          "label":"Role",
+                                          "options":[
+                                            {
+                                              "label":"User",
+                                              "value":"user",
+                                              "nested":[
+                                                {
+                                                  "name":"content",
+                                                  "spec":{
+                                                    "spec":[
+                                                      {
+                                                        "help":"For models that support image content blocks (vision), see the [Anthropic model comparison table](https://docs.anthropic.com/en/docs/about-claude/models#model-comparison-table).",
+                                                        "name":"type",
+                                                        "type":"select",
+                                                        "label":"Type",
+                                                        "options":[
+                                                          {
+                                                            "label":"Text",
+                                                            "value":"text",
+                                                            "nested":[
+                                                              {
+                                                                "help":"Content of the message on behalf of the selected **Role** .",
+                                                                "name":"text",
+                                                                "type":"text",
+                                                                "label":"Text",
+                                                                "required":true
+                                                              }
+                                                            ]
+                                                          },
+                                                          {
+                                                            "label":"Image",
+                                                            "value":"image",
+                                                            "nested":[
+                                                              {
+                                                                "name":"source",
+                                                                "spec":[
+                                                                  {
+                                                                    "help":"File name, including the extension, for example, `image.jpg`.",
+                                                                    "name":"filename",
+                                                                    "type":"filename",
+                                                                    "label":"Filename",
+                                                                    "required":true,
+                                                                    "semantic":"file:name",
+                                                                    "extension":[
+                                                                      "jpeg",
+                                                                      "jpg",
+                                                                      "png",
+                                                                      "gif",
+                                                                      "webp"
+                                                                    ]
+                                                                  },
+                                                                  {
+                                                                    "help":"Binary data of the image. For example, you can retrieve the binary data of your image using the **HTTP: Get a file** module.",
+                                                                    "name":"data",
+                                                                    "type":"buffer",
+                                                                    "label":"Data",
+                                                                    "required":true,
+                                                                    "semantic":"file:data"
+                                                                  }
+                                                                ],
+                                                                "type":"collection",
+                                                                "label":"Source",
+                                                                "required":true
+                                                              }
+                                                            ]
+                                                          },
+                                                          {
+                                                            "label":"PDF document",
+                                                            "value":"document",
+                                                            "nested":[
+                                                              "rpc://anthropic-claude/1/notePdfDocument",
+                                                              {
+                                                                "name":"pdfFileName",
+                                                                "type":"filename",
+                                                                "label":"Filename",
+                                                                "required":true,
+                                                                "semantic":"file:name",
+                                                                "extension":[
+                                                                  "pdf"
+                                                                ]
+                                                              },
+                                                              {
+                                                                "name":"pdfFileData",
+                                                                "type":"buffer",
+                                                                "label":"Data",
+                                                                "required":true,
+                                                                "semantic":"file:data"
+                                                              }
+                                                            ]
+                                                          },
+                                                          {
+                                                            "label":"Tool result",
+                                                            "value":"tool_result",
+                                                            "nested":[
+                                                              {
+                                                                "name":"tool_use_id",
+                                                                "type":"text",
+                                                                "label":"Tool Use ID",
+                                                                "required":true
+                                                              },
+                                                              {
+                                                                "name":"content",
+                                                                "type":"text",
+                                                                "label":"Content",
+                                                                "required":true
+                                                              }
+                                                            ]
+                                                          }
+                                                        ],
+                                                        "required":true
+                                                      }
+                                                    ],
+                                                    "type":"collection",
+                                                    "label":"Content"
+                                                  },
+                                                  "type":"array",
+                                                  "label":"Content",
+                                                  "labels":{
+                                                    "add":"Add content"
+                                                  },
+                                                  "required":true
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "label":"Assistant",
+                                              "value":"assistant",
+                                              "nested":[
+                                                {
+                                                  "help":"If the request ends with an assistant turn, then the response content will continue directly from that last turn.",
+                                                  "name":"content",
+                                                  "type":"text",
+                                                  "label":"Content",
+                                                  "required":true
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "label":"Tool Assistant",
+                                              "value":"tool_assistant",
+                                              "nested":[
+                                                {
+                                                  "name":"content",
+                                                  "spec":{
+                                                    "spec":[
+                                                      {
+                                                        "help":"You can send image content blocks starting with Claude 3 models.",
+                                                        "name":"type",
+                                                        "type":"select",
+                                                        "label":"Type",
+                                                        "options":[
+                                                          {
+                                                            "label":"Text",
+                                                            "value":"text",
+                                                            "nested":[
+                                                              {
+                                                                "help":"Content of the message on behalf of the selected **Role** .",
+                                                                "name":"text",
+                                                                "type":"text",
+                                                                "label":"Text",
+                                                                "required":true
+                                                              }
+                                                            ]
+                                                          },
+                                                          {
+                                                            "label":"Tool Use",
+                                                            "value":"tool_use",
+                                                            "nested":[
+                                                              {
+                                                                "name":"id",
+                                                                "type":"text",
+                                                                "label":"Tool Use ID",
+                                                                "required":true
+                                                              },
+                                                              {
+                                                                "name":"name",
+                                                                "type":"text",
+                                                                "label":"Tool Name",
+                                                                "required":true
+                                                              },
+                                                              {
+                                                                "name":"input",
+                                                                "type":"any",
+                                                                "label":"Input",
+                                                                "required":true
+                                                              }
+                                                            ]
+                                                          }
+                                                        ],
+                                                        "required":true
+                                                      }
+                                                    ],
+                                                    "type":"collection",
+                                                    "label":"Content"
+                                                  },
+                                                  "type":"array",
+                                                  "label":"Content",
+                                                  "labels":{
+                                                    "add":"Add content"
+                                                  },
+                                                  "required":true
+                                                }
+                                              ]
+                                            }
+                                          ],
+                                          "required":true
+                                        }
+                                      ],
+                                      "type":"collection",
+                                      "label":"Message"
+                                    },
+                                    "type":"array",
+                                    "label":"Messages",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"system",
+                                    "type":"text",
+                                    "label":"System Prompt"
+                                  },
+                                  {
+                                    "name":"metadata",
+                                    "spec":[
+                                      {
+                                        "name":"user_id",
+                                        "type":"text",
+                                        "label":"User ID"
+                                      }
+                                    ],
+                                    "type":"collection",
+                                    "label":"Metadata"
+                                  },
+                                  {
+                                    "name":"stop_sequences",
+                                    "spec":{
+                                      "name":"value",
+                                      "type":"text",
+                                      "label":"Stop Sequence"
+                                    },
+                                    "type":"array",
+                                    "label":"Stop Sequences"
+                                  },
+                                  {
+                                    "name":"temperature",
+                                    "type":"number",
+                                    "label":"Temperature",
+                                    "validate":{
+                                      "max":1,
+                                      "min":0
+                                    }
+                                  },
+                                  {
+                                    "name":"top_p",
+                                    "type":"number",
+                                    "label":"Top P",
+                                    "validate":{
+                                      "max":1
+                                    }
+                                  },
+                                  {
+                                    "name":"top_k",
+                                    "type":"uinteger",
+                                    "label":"Top K"
+                                  },
+                                  {
+                                    "name":"additionalParameters",
+                                    "spec":{
+                                      "name":"value",
+                                      "spec":[
+                                        {
+                                          "name":"key",
+                                          "type":"text",
+                                          "label":"Parameter Name",
+                                          "required":true
+                                        },
+                                        {
+                                          "name":"type",
+                                          "type":"select",
+                                          "label":"Input Type",
+                                          "options":[
+                                            {
+                                              "label":"Text",
+                                              "value":"text",
+                                              "nested":[
+                                                {
+                                                  "name":"value",
+                                                  "type":"text",
+                                                  "label":"Parameter Value"
+                                                }
+                                              ],
+                                              "default":true
+                                            },
+                                            {
+                                              "label":"Number",
+                                              "value":"number",
+                                              "nested":[
+                                                {
+                                                  "name":"value",
+                                                  "type":"number",
+                                                  "label":"Parameter Value"
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "label":"Boolean",
+                                              "value":"boolean",
+                                              "nested":[
+                                                {
+                                                  "name":"value",
+                                                  "type":"boolean",
+                                                  "label":"Parameter Value"
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "label":"Date",
+                                              "value":"date",
+                                              "nested":[
+                                                {
+                                                  "name":"value",
+                                                  "type":"date",
+                                                  "label":"Parameter Value"
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "label":"Tools",
+                                              "value":"tools",
+                                              "nested":[
+                                                {
+                                                  "name":"value",
+                                                  "spec":{
+                                                    "type":"text",
+                                                    "label":"Parameter Value"
+                                                  },
+                                                  "type":"array",
+                                                  "label":"Parameter Values",
+                                                  "labels":{
+                                                    "add":"Add parameter value"
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "label":"Any",
+                                              "value":"any",
+                                              "nested":[
+                                                {
+                                                  "name":"value",
+                                                  "type":"any",
+                                                  "label":"Parameter Value"
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ],
+                                      "type":"collection",
+                                      "label":"Input Parameter"
+                                    },
+                                    "type":"array",
+                                    "label":"Other Input Parameters"
+                                  }
+                                ],
+                                "advanced":true
+                              }
+                            },
+                            {
+                              "id":36,
+                              "module":"json:ParseJSON",
+                              "version":1,
+                              "parameters":{
+                                "type":150366
+                              },
+                              "filter":{
+                                "name":"if text exists",
+                                "conditions":[
+                                  [
+                                    {
+                                      "a":"{{35.textResponse}}",
+                                      "o":"exist"
+                                    }
+                                  ]
+                                ]
+                              },
+                              "mapper":{
+                                "json":"{{35.textResponse}}"
+                              },
+                              "metadata":{
+                                "designer":{
+                                  "x":4200,
+                                  "y":450
+                                },
+                                "parameters":[
+                                  {
+                                    "name":"type",
+                                    "type":"udt",
+                                    "label":"Data structure"
+                                  }
+                                ],
+                                "expect":[
+                                  {
+                                    "name":"json",
+                                    "type":"text",
+                                    "label":"JSON string",
+                                    "required":true
+                                  }
+                                ]
+                              },
+                              "onerror":[
+                                {
+                                  "id":37,
+                                  "module":"builtin:Resume",
+                                  "version":1,
+                                  "parameters":{},
+                                  "mapper":{
+                                    "news":[
+                                      {
+                                        "url":"",
+                                        "source":"",
+                                        "summary":"Unknown",
+                                        "headline":"Unknown",
+                                        "entity_type":"",
+                                        "publication_date":""
+                                      }
+                                    ],
+                                    "linkedin_activity":[
+                                      {
+                                        "url":"",
+                                        "date":"",
+                                        "summary":"Unknown",
+                                        "activity_type":""
+                                      }
+                                    ],
+                                    "intelligence_score":{
+                                      "score":"1",
+                                      "weights":{
+                                        "recency":"",
+                                        "linkedin_activity":"",
+                                        "source_reliability":""
+                                      },
+                                      "breakdown":{
+                                        "recency":"",
+                                        "linkedin_activity":"",
+                                        "source_reliability":""
+                                      },
+                                      "description":"No vallid data found"
+                                    },
+                                    "intelligence_summary":[
+                                      "Unknown"
+                                    ]
+                                  },
+                                  "metadata":{
+                                    "designer":{
+                                      "x":4500,
+                                      "y":600
+                                    },
+                                    "expect":[
+                                      {
+                                        "name":"news",
+                                        "spec":{
+                                          "name":"value",
+                                          "spec":[
+                                            {
+                                              "name":"entity_type",
+                                              "type":"text",
+                                              "label":null
+                                            },
+                                            {
+                                              "name":"headline",
+                                              "type":"text",
+                                              "label":null
+                                            },
+                                            {
+                                              "name":"publication_date",
+                                              "type":"text",
+                                              "label":null
+                                            },
+                                            {
+                                              "name":"source",
+                                              "type":"text",
+                                              "label":null
+                                            },
+                                            {
+                                              "name":"url",
+                                              "type":"text",
+                                              "label":null
+                                            },
+                                            {
+                                              "name":"summary",
+                                              "type":"text",
+                                              "label":null
+                                            }
+                                          ],
+                                          "type":"collection"
+                                        },
+                                        "type":"array",
+                                        "label":"News"
+                                      },
+                                      {
+                                        "name":"linkedin_activity",
+                                        "spec":{
+                                          "name":"value",
+                                          "spec":[
+                                            {
+                                              "name":"activity_type",
+                                              "type":"text",
+                                              "label":null
+                                            },
+                                            {
+                                              "name":"date",
+                                              "type":"text",
+                                              "label":null
+                                            },
+                                            {
+                                              "name":"summary",
+                                              "type":"text",
+                                              "label":null
+                                            },
+                                            {
+                                              "name":"url",
+                                              "type":"text",
+                                              "label":null
+                                            }
+                                          ],
+                                          "type":"collection"
+                                        },
+                                        "type":"array",
+                                        "label":"Linkedin Activity"
+                                      },
+                                      {
+                                        "name":"intelligence_score",
+                                        "spec":[
+                                          {
+                                            "name":"score",
+                                            "type":"number",
+                                            "label":null
+                                          },
+                                          {
+                                            "name":"breakdown",
+                                            "spec":[
+                                              {
+                                                "name":"recency",
+                                                "type":"number",
+                                                "label":null
+                                              },
+                                              {
+                                                "name":"source_reliability",
+                                                "type":"number",
+                                                "label":null
+                                              },
+                                              {
+                                                "name":"linkedin_activity",
+                                                "type":"number",
+                                                "label":null
+                                              }
+                                            ],
+                                            "type":"collection",
+                                            "label":null
+                                          },
+                                          {
+                                            "name":"weights",
+                                            "spec":[
+                                              {
+                                                "name":"recency",
+                                                "type":"number",
+                                                "label":null
+                                              },
+                                              {
+                                                "name":"source_reliability",
+                                                "type":"number",
+                                                "label":null
+                                              },
+                                              {
+                                                "name":"linkedin_activity",
+                                                "type":"number",
+                                                "label":null
+                                              }
+                                            ],
+                                            "type":"collection",
+                                            "label":null
+                                          },
+                                          {
+                                            "name":"description",
+                                            "type":"text",
+                                            "label":null
+                                          }
+                                        ],
+                                        "type":"collection",
+                                        "label":"Intelligence Score"
+                                      },
+                                      {
+                                        "name":"intelligence_summary",
+                                        "spec":{
+                                          "name":"value",
+                                          "type":"text"
+                                        },
+                                        "type":"array",
+                                        "label":"Intelligence Summary"
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "id":38,
+                              "module":"airtable:ActionUpdateRecords",
+                              "version":3,
+                              "parameters":{
+                                "__IMTCONN__":4480979
+                              },
+                              "mapper":{
+                                "id":"{{1.id}}",
+                                "base":"{{airtableBaseId}}",
+                                "table":"{{airtableTableId1}}",
+                                "record":{
+                                  "{{fieldId1}}":true,
+                                  "{{fieldId2}}":"{{36.intelligence_score.score}}",
+                                  "{{fieldId3}}":"`{{35.textResponse}}`",
+                                  "{{fieldId4}}":"{{36.intelligence_summary[1]}}",
+                                  "{{fieldId5}}":"{{36.intelligence_score.description}}",
+                                  "{{fieldId6}}":"{{36.news[1].publication_date}}",
+                                  "{{fieldId7}}":"# News\n## {{36.news[1].headline}}\r\n{{36.news[1].summary}}\r\n[Source Url]({{36.news[1].url}})\r\n\r\n# LinkedIn Activity\r\n{{36.linkedin_activity[1].summary}}\r\n",
+                                  "{{fieldId8}}":"{{join(map(36.news; \"url\"); \",\")}}"
+                                },
+                                "typecast":false,
+                                "useColumnId":false
+                              },
+                              "metadata":{
+                                "designer":{
+                                  "x":4500,
+                                  "y":300,
+                                  "name":"update Intelligence Info"
+                                },
+                                "parameters":[
+                                  {
+                                    "name":"__IMTCONN__",
+                                    "type":"account:airtable3,airtable2",
+                                    "label":"Connection",
+                                    "required":true
+                                  }
+                                ],
+                                "expect":[
+                                  {
+                                    "name":"base",
+                                    "type":"select",
+                                    "label":"Base",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"typecast",
+                                    "type":"boolean",
+                                    "label":"Smart links",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"useColumnId",
+                                    "type":"boolean",
+                                    "label":"Use Column ID",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"table",
+                                    "type":"select",
+                                    "label":"Table",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"id",
+                                    "type":"text",
+                                    "label":"Record ID",
+                                    "required":true
+                                  },
+                                  {
+                                    "name":"record",
+                                    "spec":[
+                                      {
+                                        "name":"{{fieldId19}}",
+                                        "type":"text",
+                                        "label":"First Name"
+                                      },
+                                      {
+                                        "name":"{{fieldId20}}",
+                                        "type":"text",
+                                        "label":"Last Name"
+                                      },
+                                      {
+                                        "name":"{{fieldId21}}",
+                                        "type":"text",
+                                        "label":"Executive Title"
+                                      },
+                                      {
+                                        "name":"{{fieldId22}}",
+                                        "type":"text",
+                                        "label":"Work Email"
+                                      },
+                                      {
+                                        "mode":"edit",
+                                        "name":"{{fieldId17}}",
+                                        "type":"select",
+                                        "label":"NeverBounce Status"
+                                      },
+                                      {
+                                        "name":"{{fieldId23}}",
+                                        "type":"text",
+                                        "label":"LinkedIn"
+                                      },
+                                      {
+                                        "name":"{{fieldId13}}",
+                                        "spec":{
+                                          "name":"value",
+                                          "label":"Record ID"
+                                        },
+                                        "type":"array",
+                                        "label":"Company"
+                                      },
+                                      {
+                                        "name":"{{fieldId7}}",
+                                        "type":"text",
+                                        "label":"Recent Business Activity"
+                                      },
+                                      {
+                                        "name":"{{fieldId18}}",
+                                        "type":"boolean",
+                                        "label":"Test Leads"
+                                      },
+                                      {
+                                        "name":"{{fieldId4}}",
+                                        "type":"text",
+                                        "label":"AI Activity Summary"
+                                      },
+                                      {
+                                        "name":"{{fieldId24}}",
+                                        "type":"text",
+                                        "label":"Seniority"
+                                      },
+                                      {
+                                        "name":"{{fieldId25}}",
+                                        "type":"text",
+                                        "label":"Department"
+                                      },
+                                      {
+                                        "name":"{{fieldId26}}",
+                                        "time":false,
+                                        "type":"date",
+                                        "label":"Job Start"
+                                      },
+                                      {
+                                        "name":"{{fieldId6}}",
+                                        "type":"text",
+                                        "label":"Recent Activity Date"
+                                      },
+                                      {
+                                        "name":"{{fieldId16}}",
+                                        "spec":{
+                                          "name":"value",
+                                          "label":"Record ID"
+                                        },
+                                        "type":"array",
+                                        "label":"Campaign Assigned To"
+                                      },
+                                      {
+                                        "mode":"edit",
+                                        "name":"{{fieldId12}}",
+                                        "type":"select",
+                                        "label":"Lead Status"
+                                      },
+                                      {
+                                        "name":"{{fieldId2}}",
+                                        "type":"number",
+                                        "label":"Data Intelligence Score"
+                                      },
+                                      {
+                                        "name":"{{fieldId27}}",
+                                        "type":"text",
+                                        "label":"NeverBounce Flag"
+                                      },
+                                      {
+                                        "mode":"edit",
+                                        "name":"{{fieldId14}}",
+                                        "type":"select",
+                                        "label":"Email Status"
+                                      },
+                                      {
+                                        "name":"{{fieldId1}}",
+                                        "type":"boolean",
+                                        "label":"Apollo Enriched"
+                                      },
+                                      {
+                                        "name":"{{fieldId28}}",
+                                        "type":"text",
+                                        "label":"Apollo PersonID"
+                                      },
+                                      {
+                                        "name":"{{fieldId8}}",
+                                        "type":"text",
+                                        "label":"Citations"
+                                      },
+                                      {
+                                        "name":"{{fieldId5}}",
+                                        "type":"text",
+                                        "label":"Intelligence Score Description"
+                                      },
+                                      {
+                                        "name":"{{fieldId3}}",
+                                        "type":"text",
+                                        "label":"Raw JSON"
+                                      },
+                                      {
+                                        "mode":"edit",
+                                        "name":"{{fieldId9}}",
+                                        "type":"select",
+                                        "label":"Enrichment Source"
+                                      },
+                                      {
+                                        "name":"{{fieldId11}}",
+                                        "spec":{
+                                          "name":"value",
+                                          "label":"Record ID"
+                                        },
+                                        "type":"array",
+                                        "label":"AI Generated Messages"
+                                      },
+                                      {
+                                        "name":"{{fieldId29}}",
+                                        "type":"text",
+                                        "label":"Salesflare ContactID"
+                                      },
+                                      {
+                                        "name":"{{fieldId10}}",
+                                        "type":"boolean",
+                                        "label":"Approve Low Priority"
+                                      },
+                                      {
+                                        "name":"{{fieldId30}}",
+                                        "type":"text",
+                                        "label":"Apollo Contact ID"
+                                      },
+                                      {
+                                        "name":"{{fieldId15}}",
+                                        "type":"boolean",
+                                        "label":"Is Paused"
+                                      }
+                                    ],
+                                    "type":"collection",
+                                    "label":"Record"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "flow":[
+                    {
+                      "id":45,
+                      "module":"airtable:ActionUpdateRecords",
+                      "version":3,
+                      "parameters":{
+                        "__IMTCONN__":4480979
+                      },
+                      "mapper":{
+                        "id":"{{1.id}}",
+                        "base":"{{airtableBaseId}}",
+                        "table":"{{airtableTableId1}}",
+                        "record":{
+                          "{{fieldId12}}":"Rejected",
+                          "{{fieldId1}}":true
+                        },
+                        "typecast":false,
+                        "useColumnId":false
+                      },
+                      "metadata":{
+                        "designer":{
+                          "x":1500,
+                          "y":1500,
+                          "name":"update Intelligence Info"
+                        },
+                        "parameters":[
+                          {
+                            "name":"__IMTCONN__",
+                            "type":"account:airtable3,airtable2",
+                            "label":"Connection",
+                            "required":true
+                          }
+                        ],
+                        "expect":[
+                          {
+                            "name":"base",
+                            "type":"select",
+                            "label":"Base",
+                            "required":true
+                          },
+                          {
+                            "name":"typecast",
+                            "type":"boolean",
+                            "label":"Smart links",
+                            "required":true
+                          },
+                          {
+                            "name":"useColumnId",
+                            "type":"boolean",
+                            "label":"Use Column ID",
+                            "required":true
+                          },
+                          {
+                            "name":"table",
+                            "type":"select",
+                            "label":"Table",
+                            "required":true
+                          },
+                          {
+                            "name":"id",
+                            "type":"text",
+                            "label":"Record ID",
+                            "required":true
+                          },
+                          {
+                            "name":"record",
+                            "spec":[
+                              {
+                                "name":"{{fieldId19}}",
+                                "type":"text",
+                                "label":"First Name"
+                              },
+                              {
+                                "name":"{{fieldId20}}",
+                                "type":"text",
+                                "label":"Last Name"
+                              },
+                              {
+                                "name":"{{fieldId21}}",
+                                "type":"text",
+                                "label":"Executive Title"
+                              },
+                              {
+                                "name":"{{fieldId22}}",
+                                "type":"text",
+                                "label":"Work Email"
+                              },
+                              {
+                                "mode":"edit",
+                                "name":"{{fieldId17}}",
+                                "type":"select",
+                                "label":"NeverBounce Status"
+                              },
+                              {
+                                "mode":"edit",
+                                "name":"{{fieldId12}}",
+                                "type":"select",
+                                "label":"Lead Status"
+                              },
+                              {
+                                "name":"{{fieldId27}}",
+                                "type":"text",
+                                "label":"NeverBounce Flag"
+                              },
+                              {
+                                "name":"{{fieldId23}}",
+                                "type":"text",
+                                "label":"LinkedIn"
+                              },
+                              {
+                                "name":"{{fieldId13}}",
+                                "spec":{
+                                  "name":"value",
+                                  "label":"Record ID"
+                                },
+                                "type":"array",
+                                "label":"Company"
+                              },
+                              {
+                                "name":"{{fieldId7}}",
+                                "type":"text",
+                                "label":"Recent Business Activity"
+                              },
+                              {
+                                "name":"{{fieldId18}}",
+                                "type":"boolean",
+                                "label":"Test Leads"
+                              },
+                              {
+                                "name":"{{fieldId4}}",
+                                "type":"text",
+                                "label":"AI Activity Summary"
+                              },
+                              {
+                                "name":"{{fieldId2}}",
+                                "type":"number",
+                                "label":"Data Intelligence Score"
+                              },
+                              {
+                                "name":"{{fieldId24}}",
+                                "type":"text",
+                                "label":"Seniority"
+                              },
+                              {
+                                "name":"{{fieldId25}}",
+                                "type":"text",
+                                "label":"Department"
+                              },
+                              {
+                                "name":"{{fieldId26}}",
+                                "time":false,
+                                "type":"date",
+                                "label":"Job Start"
+                              },
+                              {
+                                "name":"{{fieldId6}}",
+                                "type":"text",
+                                "label":"Recent Activity Date"
+                              },
+                              {
+                                "name":"{{fieldId16}}",
+                                "spec":{
+                                  "name":"value",
+                                  "label":"Record ID"
+                                },
+                                "type":"array",
+                                "label":"Campaign Assigned To"
+                              },
+                              {
+                                "mode":"edit",
+                                "name":"{{fieldId14}}",
+                                "type":"select",
+                                "label":"Email Status"
+                              },
+                              {
+                                "name":"{{fieldId1}}",
+                                "type":"boolean",
+                                "label":"Apollo Enriched"
+                              },
+                              {
+                                "name":"{{fieldId28}}",
+                                "type":"text",
+                                "label":"Apollo PersonID"
+                              },
+                              {
+                                "name":"{{fieldId8}}",
+                                "type":"text",
+                                "label":"Citations"
+                              },
+                              {
+                                "name":"{{fieldId5}}",
+                                "type":"text",
+                                "label":"Intelligence Score Description"
+                              },
+                              {
+                                "name":"{{fieldId3}}",
+                                "type":"text",
+                                "label":"Raw JSON"
+                              },
+                              {
+                                "mode":"edit",
+                                "name":"{{fieldId9}}",
+                                "type":"select",
+                                "label":"Enrichment Source"
+                              },
+                              {
+                                "name":"{{fieldId11}}",
+                                "spec":{
+                                  "name":"value",
+                                  "label":"Record ID"
+                                },
+                                "type":"array",
+                                "label":"AI Generated Messages"
+                              },
+                              {
+                                "name":"{{fieldId29}}",
+                                "type":"text",
+                                "label":"Salesflare ContactID"
+                              },
+                              {
+                                "name":"{{fieldId10}}",
+                                "type":"boolean",
+                                "label":"Approve Low Priority"
+                              },
+                              {
+                                "name":"{{fieldId30}}",
+                                "type":"text",
+                                "label":"Apollo Contact ID"
+                              },
+                              {
+                                "name":"{{fieldId15}}",
+                                "type":"boolean",
+                                "label":"Is Paused"
+                              },
+                              {
+                                "mode":"edit",
+                                "name":"{{fieldId31}}",
+                                "type":"select",
+                                "label":"Call Priority"
+                              },
+                              {
+                                "name":"{{fieldId32}}",
+                                "type":"boolean",
+                                "label":"crmTask"
+                              }
+                            ],
+                            "type":"collection",
+                            "label":"Record"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "flow":[
+            {
+              "id":47,
+              "module":"util:FunctionSleep",
+              "version":1,
+              "parameters":{},
+              "filter":{
+                "name":"No company",
+                "conditions":[
+                  [
+                    {
+                      "a":"{{1.Company[1]}}",
+                      "o":"notexist"
+                    },
+                    {
+                      "a":"{{1.`grata-import-domain`}}",
+                      "o":"exist"
+                    }
+                  ]
+                ]
+              },
+              "mapper":{
+                "duration":"5"
+              },
+              "metadata":{
+                "designer":{
+                  "x":900,
+                  "y":1800,
+                  "name":"delay 5 secs"
+                },
+                "expect":[
+                  {
+                    "name":"duration",
+                    "type":"uinteger",
+                    "label":"Delay",
+                    "required":true,
+                    "validate":{
+                      "max":300,
+                      "min":1
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id":48,
+              "module":"airtable:ActionSearchRecords",
+              "version":3,
+              "parameters":{
+                "__IMTCONN__":4480979
+              },
+              "mapper":{
+                "base":"{{airtableBaseId}}",
+                "sort":[
+                  {
+                    "field":"Created",
+                    "direction":"desc"
+                  }
+                ],
+                "view":"{{airtableViewId2}}",
+                "table":"{{airtableTableId2}}",
+                "fields":[
+                  "Name",
+                  "Domain",
+                  "Description",
+                  "Region",
+                  "Apollo Enriched",
+                  " Revenue Estimate ",
+                  "Employee Estimate",
+                  "Employees on Professional Networks",
+                  "Employee Growth (Annual)",
+                  "Total Review Count",
+                  "Aggregate Rating",
+                  "Ownership",
+                  "Funding Stage",
+                  "Total Funding Amount",
+                  "Phone",
+                  "Vertical",
+                  "Keywords",
+                  "Year Founded",
+                  "Record ID",
+                  "Leads",
+                  "Leads Name",
+                  "Company LinkedIn",
+                  "Full Name (from Leads)",
+                  "Created",
+                  "Last Modified",
+                  "Imported table",
+                  "Apollo orgID",
+                  "Apollo Account ID",
+                  "Headquarters",
+                  "lemlist lead id",
+                  "First High",
+                  "First Medium",
+                  "Enrichment Source",
+                  "Last Low/Risk",
+                  "Clay Enriched (from Imported table)",
+                  "Raw Address",
+                  "Persons copy"
+                ],
+                "formula":"LOWER({Domain})=\"{{lower(trim(1.`grata-import-domain`))}}\"",
+                "maxRecords":"1",
+                "useColumnId":false
+              },
+              "metadata":{
+                "designer":{
+                  "x":1200,
+                  "y":1800,
+                  "name":"search company"
+                },
+                "parameters":[
+                  {
+                    "name":"__IMTCONN__",
+                    "type":"account:airtable3,airtable2",
+                    "label":"Connection",
+                    "required":true
+                  }
+                ],
+                "expect":[
+                  {
+                    "name":"base",
+                    "type":"select",
+                    "label":"Base",
+                    "required":true
+                  },
+                  {
+                    "name":"useColumnId",
+                    "type":"boolean",
+                    "label":"Use Column ID",
+                    "required":true
+                  },
+                  {
+                    "name":"table",
+                    "type":"select",
+                    "label":"Table",
+                    "required":true
+                  },
+                  {
+                    "name":"formula",
+                    "type":"text",
+                    "label":"Formula"
+                  },
+                  {
+                    "name":"maxRecords",
+                    "type":"integer",
+                    "label":"Limit"
+                  },
+                  {
+                    "name":"sort",
+                    "spec":[
+                      {
+                        "name":"field",
+                        "type":"select",
+                        "label":"Field",
+                        "dynamic":true,
+                        "options":[]
+                      },
+                      {
+                        "name":"direction",
+                        "type":"select",
+                        "label":"Direction",
+                        "options":[
+                          {
+                            "label":"Descending",
+                            "value":"desc"
+                          },
+                          {
+                            "label":"Ascending",
+                            "value":"asc"
+                          }
+                        ]
+                      }
+                    ],
+                    "type":"array",
+                    "label":"Sort"
+                  },
+                  {
+                    "name":"view",
+                    "type":"select",
+                    "label":"View"
+                  },
+                  {
+                    "name":"fields",
+                    "type":"select",
+                    "label":"Output Fields",
+                    "multiple":true
+                  }
+                ]
+              }
+            },
+            {
+              "id":49,
+              "module":"builtin:BasicRouter",
+              "version":1,
+              "mapper":null,
+              "metadata":{
+                "designer":{
+                  "x":1500,
+                  "y":1800
+                }
+              },
+              "routes":[
+                {
+                  "flow":[
+                    {
+                      "id":50,
+                      "module":"airtable:ActionUpdateRecords",
+                      "version":3,
+                      "parameters":{
+                        "__IMTCONN__":4480979
+                      },
+                      "filter":{
+                        "name":"record exists",
+                        "conditions":[
+                          [
+                            {
+                              "a":"{{48.`__IMTLENGTH__`}}",
+                              "b":"0",
+                              "o":"number:greater"
+                            }
+                          ]
+                        ]
+                      },
+                      "mapper":{
+                        "id":"{{1.id}}",
+                        "base":"{{airtableBaseId}}",
+                        "table":"{{airtableTableId1}}",
+                        "record":{
+                          "{{fieldId13}}":[
+                            "{{48.id}}"
+                          ]
+                        },
+                        "typecast":false,
+                        "useColumnId":false
+                      },
+                      "metadata":{
+                        "designer":{
+                          "x":1800,
+                          "y":1650,
+                          "name":"update company"
+                        },
+                        "parameters":[
+                          {
+                            "name":"__IMTCONN__",
+                            "type":"account:airtable3,airtable2",
+                            "label":"Connection",
+                            "required":true
+                          }
+                        ],
+                        "expect":[
+                          {
+                            "name":"base",
+                            "type":"select",
+                            "label":"Base",
+                            "required":true
+                          },
+                          {
+                            "name":"typecast",
+                            "type":"boolean",
+                            "label":"Smart links",
+                            "required":true
+                          },
+                          {
+                            "name":"useColumnId",
+                            "type":"boolean",
+                            "label":"Use Column ID",
+                            "required":true
+                          },
+                          {
+                            "name":"table",
+                            "type":"select",
+                            "label":"Table",
+                            "required":true
+                          },
+                          {
+                            "name":"id",
+                            "type":"text",
+                            "label":"Record ID",
+                            "required":true
+                          },
+                          {
+                            "name":"record",
+                            "spec":[
+                              {
+                                "name":"{{fieldId19}}",
+                                "type":"text",
+                                "label":"First Name"
+                              },
+                              {
+                                "name":"{{fieldId20}}",
+                                "type":"text",
+                                "label":"Last Name"
+                              },
+                              {
+                                "name":"{{fieldId21}}",
+                                "type":"text",
+                                "label":"Executive Title"
+                              },
+                              {
+                                "name":"{{fieldId22}}",
+                                "type":"text",
+                                "label":"Work Email"
+                              },
+                              {
+                                "mode":"edit",
+                                "name":"{{fieldId17}}",
+                                "type":"select",
+                                "label":"NeverBounce Status"
+                              },
+                              {
+                                "mode":"edit",
+                                "name":"{{fieldId12}}",
+                                "type":"select",
+                                "label":"Lead Status"
+                              },
+                              {
+                                "name":"{{fieldId13}}",
+                                "spec":{
+                                  "name":"value",
+                                  "label":"Record ID"
+                                },
+                                "type":"array",
+                                "label":"Company"
+                              },
+                              {
+                                "name":"{{fieldId27}}",
+                                "type":"text",
+                                "label":"NeverBounce Flag"
+                              },
+                              {
+                                "name":"{{fieldId23}}",
+                                "type":"text",
+                                "label":"LinkedIn"
+                              },
+                              {
+                                "name":"{{fieldId7}}",
+                                "type":"text",
+                                "label":"Recent Business Activity"
+                              },
+                              {
+                                "name":"{{fieldId18}}",
+                                "type":"boolean",
+                                "label":"Test Leads"
+                              },
+                              {
+                                "name":"{{fieldId4}}",
+                                "type":"text",
+                                "label":"AI Activity Summary"
+                              },
+                              {
+                                "name":"{{fieldId2}}",
+                                "type":"number",
+                                "label":"Data Intelligence Score"
+                              },
+                              {
+                                "name":"{{fieldId24}}",
+                                "type":"text",
+                                "label":"Seniority"
+                              },
+                              {
+                                "name":"{{fieldId25}}",
+                                "type":"text",
+                                "label":"Department"
+                              },
+                              {
+                                "name":"{{fieldId26}}",
+                                "time":false,
+                                "type":"date",
+                                "label":"Job Start"
+                              },
+                              {
+                                "name":"{{fieldId6}}",
+                                "type":"text",
+                                "label":"Recent Activity Date"
+                              },
+                              {
+                                "name":"{{fieldId16}}",
+                                "spec":{
+                                  "name":"value",
+                                  "label":"Record ID"
+                                },
+                                "type":"array",
+                                "label":"Campaign Assigned To"
+                              },
+                              {
+                                "mode":"edit",
+                                "name":"{{fieldId14}}",
+                                "type":"select",
+                                "label":"Email Status"
+                              },
+                              {
+                                "name":"{{fieldId1}}",
+                                "type":"boolean",
+                                "label":"Apollo Enriched"
+                              },
+                              {
+                                "name":"{{fieldId28}}",
+                                "type":"text",
+                                "label":"Apollo PersonID"
+                              },
+                              {
+                                "name":"{{fieldId8}}",
+                                "type":"text",
+                                "label":"Citations"
+                              },
+                              {
+                                "name":"{{fieldId5}}",
+                                "type":"text",
+                                "label":"Intelligence Score Description"
+                              },
+                              {
+                                "name":"{{fieldId3}}",
+                                "type":"text",
+                                "label":"Raw JSON"
+                              },
+                              {
+                                "mode":"edit",
+                                "name":"{{fieldId9}}",
+                                "type":"select",
+                                "label":"Enrichment Source"
+                              },
+                              {
+                                "name":"{{fieldId11}}",
+                                "spec":{
+                                  "name":"value",
+                                  "label":"Record ID"
+                                },
+                                "type":"array",
+                                "label":"AI Generated Messages"
+                              },
+                              {
+                                "name":"{{fieldId29}}",
+                                "type":"text",
+                                "label":"Salesflare ContactID"
+                              },
+                              {
+                                "name":"{{fieldId10}}",
+                                "type":"boolean",
+                                "label":"Approve Low Priority"
+                              },
+                              {
+                                "name":"{{fieldId30}}",
+                                "type":"text",
+                                "label":"Apollo Contact ID"
+                              },
+                              {
+                                "name":"{{fieldId15}}",
+                                "type":"boolean",
+                                "label":"Is Paused"
+                              },
+                              {
+                                "mode":"edit",
+                                "name":"{{fieldId31}}",
+                                "type":"select",
+                                "label":"Call Priority"
+                              },
+                              {
+                                "name":"{{fieldId32}}",
+                                "type":"boolean",
+                                "label":"crmTask"
+                              },
+                              {
+                                "name":"{{fieldId33}}",
+                                "type":"boolean",
+                                "label":"Justcall Sync"
+                              },
+                              {
+                                "name":"{{fieldId34}}",
+                                "type":"boolean",
+                                "label":"Enrichment Failed"
+                              },
+                              {
+                                "name":"{{fieldId36}}",
+                                "type":"text",
+                                "label":"Phone"
+                              },
+                              {
+                                "name":"{{fieldId35}}",
+                                "spec":{
+                                  "name":"value",
+                                  "label":"Record ID"
+                                },
+                                "type":"array",
+                                "label":"AI Generated Messages copy"
+                              },
+                              {
+                                "name":"{{fieldId37}}",
+                                "type":"text",
+                                "label":"grata-import-domain"
+                              }
+                            ],
+                            "type":"collection",
+                            "label":"Record"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata":{
+    "instant":false,
+    "version":1,
+    "scenario":{
+      "roundtrips":1,
+      "maxErrors":3,
+      "autoCommit":false,
+      "autoCommitTriggerLast":true,
+      "sequential":true,
+      "slots":null,
+      "confidential":false,
+      "dataloss":false,
+      "dlq":true,
+      "freshVariables":false
+    },
+    "designer":{
+      "orphans":[]
+    },
+    "zone":"us2.make.com",
+    "notes":[
+      {
+        "moduleIds":[
+          1
+        ],
+        "content":"<p>Search Leads where  NOT( {Lead Status} = \"done\",</p><p>      {Lead Status} = \"unsubscribed\",</p><p>      {Lead Status} = \"notInterested\") and  are Neverbounce validated</p>",
+        "isFilterNote":false,
+        "metadata":{
+          "color":"#9138FE"
+        }
+      }
+    ]
+  }
+}
