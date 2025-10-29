@@ -1,8 +1,6 @@
 # Outbound Automation Suite
 ### Make.com + Airtable + Claude + Lemlist
 
-![Workflow Diagram (Dark)](./workflow-diagram-dark.png)
-
 A 3-stage automation system that turns raw leads into enriched, qualified prospects — automatically assigned to the right outbound campaign with AI-powered first-touch messaging synced to Lemlist.
 
 ---
