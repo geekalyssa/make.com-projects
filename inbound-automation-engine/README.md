@@ -1,5 +1,5 @@
 # Inbound Lead Engine (Agencies & Services)
-Make.com + Pipedrive + AI Enrichment + LinkedIn/Email Outreach
+Make.com + Pipedrive + AI Enrichment + LinkedIn/Email Outreach (Expandi)
 
 A production-ready inbound system for agencies: capture leads → enrich & score → create/update in Pipedrive → open deals for qualified leads → generate AI outreach → fallback to LinkedIn if no email.
 
@@ -41,11 +41,11 @@ flowchart TD
 
 ## Files
 - `01_webform_capture.json` – Webhook intake & normalization.
-- `02_linkedin_reply_capture.json` – Extendly reply hook → contact mapping.
+- `02_linkedin_reply_capture.json` – Expandi reply hook → contact mapping.
 - `03_enrich_and_score.json` – Research & **Truth JSON** with `fitScore` + `keySignals`.
 - `04_create_deals.json` – Open deals for qualified leads with stage/owner mapping.
 - `05_ai_outreach_message.json` – Generate first message with approved prompts.
-- `06_linkedin_no_email_fallback.json` – If no email, send via Extendly LinkedIn.
+- `06_linkedin_no_email_fallback.json` – If no email, send via Expandi LinkedIn.
 
 ---
 
@@ -58,7 +58,7 @@ flowchart TD
 
 ## Notes on Reliability
 - **Retries & throttling:** backoff sleeps around API loops; guarded routers to skip nulls.
-- **Fallbacks:** if Perplexity/LinkedIn About missing → use Claude recap or default message shell.
+- **Fallbacks:** if Website/LinkedIn About missing → use OpenAI recap or default message shell.
 - **Approval gates:** only **approved** AI copy moves to outreach.
 - **Observability:** lightweight logs/flags for qualification, enrichment source, and confidence.
 
