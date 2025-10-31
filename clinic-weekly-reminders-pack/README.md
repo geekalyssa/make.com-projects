@@ -1,5 +1,7 @@
 # Clinic Weekly Reminders (HubSpot → Make Data Store → Mailchimp)
-Sends weekly reminder emails to clinic doctors about open cases. Uses Make Data Store for stateful tracking and idempotent sends.
+This workflow runs a **stateful weekly reminder system** that connects **HubSpot → Make Data Store → Mailchimp** so each doctor gets one timely update about open cases — **no duplicates, no misses**. 
+It remembers who you’ve already emailed, gracefully talks to HubSpot and Mailchimp, and politely avoids spamming anyone twice (because nobody likes that doctor who gets 3 reminders in one day). Designed like a **workflow architect**, maintained like a **lazy engineer** who never wants to fix duplicates again
+
 
 ## Flow (Mermaid)
 ```mermaid
@@ -12,11 +14,22 @@ flowchart LR
   E --> F[Writeback status + lastSentAt]
 ```
 
-## Why it’s interesting
-- **Stateful logic**: Make Data Store for dedupe/idempotency (no double sends)
-- **Batching**: chunk, throttle, and retry on API limits
-- **Mapping**: HubSpot properties → Mailchimp merge fields
-- **Observability**: per-doctor counters, lastSentAt, error notes
+**What it does**
+- Pulls doctors + open cases from **HubSpot**
+- Tracks sends in **Make Data Store** for weekly idempotency
+- Syncs/updates audience in **Mailchimp**, triggers reminders
+- Logs delivery metadata (`lastSentAt`, `caseCount`), resets state weekly
+
+**Under the hood**
+- **Stateful design** for dedupe/idempotency across runs  
+- **Batching & throttling** with safe retries under API limits
+- Workflow **architecture & orchestration** in Make.com  
+- **Data Store** as a lightweight database  
+- **API pagination, rate limiting, and retry** patterns  
+- **CRM → Email** integration and data normalization  
+- Production-grade **error handling & monitoring**
+
+
 
 ## Files
 - `01_pull_cases_hubspot.json` – HS search + field normalization  
