@@ -32,6 +32,15 @@ Key Skills:
 📂 `/inbound-lead-engine/`
 
 ---
+### 🩺 Clinic Weekly Reminders (HubSpot → Make Data Store → Mailchimp)
+
+A stateful automation that sends **weekly reminder emails to clinic doctors** about open cases.  
+It fetches data from **HubSpot**, stores and deduplicates it in **Make Data Store**, and syncs with **Mailchimp** to trigger campaigns — ensuring no duplicate sends.  
+Under the hood, it handles **batch processing**, **API throttling**, and **state resets** each week.  
+
+📂 `/clinic-weekly-reminders-pack/`
+
+---
 
 ## 🧩 Tech Stack Used
 - **Make.com** (workflow orchestration)
