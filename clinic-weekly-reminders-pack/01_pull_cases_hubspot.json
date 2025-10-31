@@ -1,0 +1,2071 @@
+{
+    "name": "Weekly Email Tuesday - Treatment plan Ready Cases in last 60 days",
+    "flow": [
+        {
+            "id": 2,
+            "module": "hubspotcrm:searchDeals",
+            "version": 2,
+            "parameters": {
+                "__IMTCONN__": 4001576
+            },
+            "mapper": {
+                "limit": "100",
+                "filter": [
+                    [
+                        {
+                            "a": "createdate",
+                            "b": "{{now}}",
+                            "o": "LTE"
+                        },
+                        {
+                            "a": "createdate",
+                            "b": "{{addDays(now; -59)}}",
+                            "o": "GTE"
+                        },
+                        {
+                            "a": "dealstage",
+                            "b": "{{redactedPhone}}",
+                            "o": "EQ"
+                        },
+                        {
+                            "a": "product_name",
+                            "b": "aligners",
+                            "o": "CONTAINS_TOKEN"
+                        }
+                    ]
+                ],
+                "direction": "DESCENDING",
+                "propertyName": "createdate",
+                "outputProperties": [
+                    "case_reference",
+                    "product_name",
+                    "case_url",
+                    "createdate",
+                    "dealname",
+                    "hubspot_owner_id",
+                    "dealstage",
+                    "dental_group",
+                    "doctor_email",
+                    "doctor_name",
+                    "patient_id",
+                    "patient_name"
+                ],
+                "parseCustomFields": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 450,
+                    "name": "TP Ready deals in last 60 days"
+                },
+                "restore": {
+                    "expect": {
+                        "direction": {
+                            "label": "{{connectionLabel}}"
+                        },
+                        "propertyName": {
+                            "mode": "chose",
+                            "label": "{{connectionLabel}}"
+                        },
+                        "outputProperties": {
+                            "mode": "chose",
+                            "label": [
+                                "Case Reference",
+                                "Case Type",
+                                "Case URL",
+                                "Create Date",
+                                "Deal Name",
+                                "Deal Owner",
+                                "Deal Stage",
+                                "Dental Group",
+                                "Doctor Email",
+                                "Doctor Name",
+                                "Patient ID",
+                                "Patient Name"
+                            ]
+                        },
+                        "parseCustomFields": {
+                            "mode": "chose"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "hubspotcrm"
+                            },
+                            "label": "{{connectionLabel}}"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:hubspotcrm",
+                        "label": "{{connectionLabel}}",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "outputProperties",
+                        "type": "select",
+                        "label": "{{connectionLabel}}",
+                        "multiple": true
+                    },
+                    {
+                        "name": "query",
+                        "type": "text",
+                        "label": "{{connectionLabel}}"
+                    },
+                    {
+                        "name": "filter",
+                        "type": "filter",
+                        "label": "{{connectionLabel}}",
+                        "options": {
+                            "store": [
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "amount"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "amount_in_home_currency"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_acv"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_arr"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_associated_deal_registration_product_interests"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_associated_deal_registration_deal_type"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_attributed_team_ids"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_all_assigned_business_unit_ids"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "engagements_last_meeting_booked_campaign"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "case_accepted_date"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "case_reference"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "product_name"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "case_url"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "closedate"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "closed_lost_reason"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_closed_won_count"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "closed_won_reason"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "createdate"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_created_by_user_id"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"1st Sub - Entered Into Portal (Deals Pipeline)\"",
+                                    "value": "hs_v2_cumulative_time_in_contractsent"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Closed Lost (Deals Pipeline)\"",
+                                    "value": "hs_v2_cumulative_time_in_closedlost"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Closed Won (Deals Pipeline)\"",
+                                    "value": "hs_v2_cumulative_time_in_closedwon"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Lead (Deals Pipeline)\"",
+                                    "value": "hs_v2_cumulative_time_in_appointmentscheduled"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Needs Discovery (Deals Pipeline)\"",
+                                    "value": "hs_v2_cumulative_time_in_presentationscheduled"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Qualification  (Deals Pipeline)\"",
+                                    "value": "hs_v2_cumulative_time_in_qualifiedtobuy"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Solution Presented (Deals Pipeline)\"",
+                                    "value": "hs_v2_cumulative_time_in_decisionmakerboughtin"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "deal_currency_code"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"1st Sub - Entered Into Portal (Deals Pipeline)\"",
+                                    "value": "hs_v2_date_entered_contractsent"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Closed Lost (Deals Pipeline)\"",
+                                    "value": "hs_v2_date_entered_closedlost"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Closed Won (Deals Pipeline)\"",
+                                    "value": "hs_v2_date_entered_closedwon"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Lead (Deals Pipeline)\"",
+                                    "value": "hs_v2_date_entered_appointmentscheduled"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Needs Discovery (Deals Pipeline)\"",
+                                    "value": "hs_v2_date_entered_presentationscheduled"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Qualification  (Deals Pipeline)\"",
+                                    "value": "hs_v2_date_entered_qualifiedtobuy"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Solution Presented (Deals Pipeline)\"",
+                                    "value": "hs_v2_date_entered_decisionmakerboughtin"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_v2_date_entered_current_stage"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"1st Sub - Entered Into Portal (Deals Pipeline)\"",
+                                    "value": "hs_v2_date_exited_contractsent"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Closed Lost (Deals Pipeline)\"",
+                                    "value": "hs_v2_date_exited_closedlost"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Closed Won (Deals Pipeline)\"",
+                                    "value": "hs_v2_date_exited_closedwon"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Lead (Deals Pipeline)\"",
+                                    "value": "hs_v2_date_exited_appointmentscheduled"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Needs Discovery (Deals Pipeline)\"",
+                                    "value": "hs_v2_date_exited_presentationscheduled"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Qualification  (Deals Pipeline)\"",
+                                    "value": "hs_v2_date_exited_qualifiedtobuy"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Solution Presented (Deals Pipeline)\"",
+                                    "value": "hs_v2_date_exited_decisionmakerboughtin"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "engagements_last_meeting_booked"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "days_to_close"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_all_collaborator_owner_ids"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "description"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "dealname"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hubspot_owner_id"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_deal_stage_probability"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_deal_score"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_is_deal_split"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "dealstage"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_tag_ids"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "dealtype"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "dental_group"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "doctor_email"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "doctor_name"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_exchange_rate"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_forecast_amount"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_manual_forecast_category"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_forecast_probability"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_synced_deal_owner_name_and_email"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_deal_registration_mrr"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_deal_registration_mrr_currency_code"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hubspot_team_id"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_is_active_shared_deal"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_is_closed_count"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_is_closed_lost"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_is_closed_won"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_is_closed"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_is_open_count"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "notes_last_updated"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "notes_last_contacted"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_lastmodifieddate"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_latest_approval_status"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"1st Sub - Entered Into Portal (Deals Pipeline)\"",
+                                    "value": "hs_v2_latest_time_in_contractsent"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Closed Lost (Deals Pipeline)\"",
+                                    "value": "hs_v2_latest_time_in_closedlost"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Closed Won (Deals Pipeline)\"",
+                                    "value": "hs_v2_latest_time_in_closedwon"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Lead (Deals Pipeline)\"",
+                                    "value": "hs_v2_latest_time_in_appointmentscheduled"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Needs Discovery (Deals Pipeline)\"",
+                                    "value": "hs_v2_latest_time_in_presentationscheduled"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Qualification  (Deals Pipeline)\"",
+                                    "value": "hs_v2_latest_time_in_qualifiedtobuy"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}"Solution Presented (Deals Pipeline)\"",
+                                    "value": "hs_v2_latest_time_in_decisionmakerboughtin"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_analytics_latest_source"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_analytics_latest_source_data_1"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_analytics_latest_source_data_2"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_analytics_latest_source_timestamp"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "engagements_last_meeting_booked_medium"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_merged_object_ids"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_mrr"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "notes_next_activity_date"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_next_step"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_num_associated_active_deal_registrations"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "num_associated_contacts"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_num_of_associated_line_items"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_num_associated_deal_registrations"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "num_notes"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "num_contacted_notes"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "open_day_booked"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_analytics_source"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_analytics_source_data_1"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_analytics_source_data_2"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hubspot_owner_assigneddate"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "patient_id"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "patient_name"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "pipeline"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_priority"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_object_id"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_object_source_label"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_object_source_detail_1"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_object_source_detail_2"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_object_source_detail_3"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_shared_team_ids"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_shared_user_ids"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "engagements_last_meeting_booked_source"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_v2_time_in_current_stage"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_tcv"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_updated_by_user_id"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_projected_amount"
+                                },
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "value": "hs_projected_amount_in_home_currency"
+                                }
+                            ],
+                            "operators": [
+                                {
+                                    "label": "{{connectionLabel}}",
+                                    "options": [
+                                        {
+                                            "label": "{{connectionLabel}}",
+                                            "value": "EQ"
+                                        },
+                                        {
+                                            "label": "{{connectionLabel}}",
+                                            "value": "NEQ"
+                                        },
+                                        {
+                                            "label": "{{connectionLabel}}",
+                                            "value": "LT"
+                                        },
+                                        {
+                                            "label": "{{connectionLabel}}",
+                                            "value": "LTE"
+                                        },
+                                        {
+                                            "label": "{{connectionLabel}}",
+                                            "value": "GT"
+                                        },
+                                        {
+                                            "label": "{{connectionLabel}}",
+                                            "value": "GTE"
+                                        },
+                                        {
+                                            "label": "{{connectionLabel}}",
+                                            "value": "CONTAINS_TOKEN"
+                                        },
+                                        {
+                                            "label": "{{connectionLabel}}",
+                                            "value": "NOT_CONTAINS_TOKEN"
+                                        },
+                                        {
+                                            "label": "{{connectionLabel}}",
+                                            "value": "HAS_PROPERTY"
+                                        },
+                                        {
+                                            "label": "{{connectionLabel}}",
+                                            "value": "NOT_HAS_PROPERTY"
+                                        },
+                                        {
+                                            "label": "{{connectionLabel}}",
+                                            "value": "BETWEEN"
+                                        },
+                                        {
+                                            "label": "{{connectionLabel}}",
+                                            "value": "IN"
+                                        },
+                                        {
+                                            "label": "{{connectionLabel}}",
+                                            "value": "NOT_IN"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "propertyName",
+                        "type": "select",
+                        "label": "{{connectionLabel}}"
+                    },
+                    {
+                        "name": "direction",
+                        "type": "select",
+                        "label": "{{connectionLabel}}",
+                        "validate": {
+                            "enum": [
+                                "DESCENDING",
+                                "ASCENDING"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "cursor",
+                        "type": "text",
+                        "label": "{{connectionLabel}}"
+                    },
+                    {
+                        "name": "parseCustomFields",
+                        "type": "boolean",
+                        "label": "{{connectionLabel}}",
+                        "required": true
+                    },
+                    {
+                        "name": "limit",
+                        "type": "uinteger",
+                        "label": "{{connectionLabel}}"
+                    }
+                ],
+                "advanced": true
+            }
+        },
+        {
+            "id": 19,
+            "module": "builtin:BasicRouter",
+            "version": 1,
+            "filter": {
+                "name": " TP Ready Deal Exists",
+                "conditions": [
+                    [
+                        {
+                            "a": "{{2.`__IMTLENGTH__`}}",
+                            "b": "0",
+                            "o": "number:greater"
+                        },
+                        {
+                            "a": "{{2.properties.doctor_email}}",
+                            "o": "exist"
+                        },
+                        {
+                            "a": "{{2.properties.patient_name}}",
+                            "o": "exist"
+                        },
+                        {
+                            "a": "{{2.properties.product_name}}",
+                            "b": "Aligners",
+                            "o": "text:contain:ci"
+                        }
+                    ]
+                ]
+            },
+            "mapper": null,
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 450
+                }
+            },
+            "routes": [
+                {
+                    "flow": [
+                        {
+                            "id": 20,
+                            "module": "util:TextAggregator",
+                            "version": 1,
+                            "parameters": {
+                                "feeder": 2,
+                                "rowSeparator": ""
+                            },
+                            "filter": {
+                                "name": "Not {{brand}} and {{brand}}",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{2.properties.dental_group}}",
+                                            "b": "{{brand}}",
+                                            "o": "text:notequal:ci"
+                                        },
+                                        {
+                                            "a": "{{2.properties.dental_group}}",
+                                            "b": "{{brand}} Clinics",
+                                            "o": "text:notequal:ci"
+                                        },
+                                        {
+                                            "a": "{{2.properties.dental_group}}",
+                                            "o": "exist"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "mapper": {
+                                "value": "<li>{{startcase(2.properties.patient_name)}}{{space}}({{2.properties.case_reference}})</li>"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 600,
+                                    "y": 150
+                                },
+                                "restore": {
+                                    "extra": {
+                                        "feeder": {
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "rowSeparator": {
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "rowSeparator",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "validate": {
+                                            "enum": [
+                                                "\n",
+                                                "\t",
+                                                "other"
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "value",
+                                        "type": "text",
+                                        "label": "{{connectionLabel}}"
+                                    }
+                                ],
+                                "advanced": true
+                            },
+                            "flags": {
+                                "groupBy": "{{2.properties.doctor_email}}",
+                                "stopIfEmpty": true
+                            }
+                        },
+                        {
+                            "id": 72,
+                            "module": "mailchimp:getASubscriber",
+                            "version": 2,
+                            "parameters": {
+                                "__IMTCONN__": 6776474
+                            },
+                            "filter": {
+                                "name": "Email Exists",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{20.`__IMTKEY__`}}",
+                                            "o": "exist"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "mapper": {
+                                "list": "{mailchimpListId}",
+                                "email": "{{20.`__IMTKEY__`}}",
+                                "getSubscriber": "by_email"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 900,
+                                    "y": 150
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "list": {
+                                            "mode": "chose",
+                                            "label": "{{connectionLabel}}"
+                                        },
+                                        "email": {
+                                            "mode": "edit"
+                                        },
+                                        "getSubscriber": {
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "mailchimp"
+                                            },
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:mailchimp",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "getSubscriber",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "by_id",
+                                                "by_email",
+                                                "by_unique_email__id"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "mode": "edit",
+                                        "name": "list",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "mode": "edit",
+                                        "name": "email",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    }
+                                ]
+                            },
+                            "onerror": [
+                                {
+                                    "id": 77,
+                                    "module": "builtin:Ignore",
+                                    "version": 1,
+                                    "metadata": {
+                                        "designer": {
+                                            "x": 1200,
+                                            "y": 300
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "id": 60,
+                            "module": "datastore:AddRecord",
+                            "version": 1,
+                            "parameters": {
+                                "datastore": {{dataStoreId1}}
+                            },
+                            "mapper": {
+                                "key": "{{20.`__IMTKEY__`}}",
+                                "data": {
+                                    "Status": "{{72.status}}",
+                                    "campaignId": "",
+                                    "doctorEmail": "{{20.`__IMTKEY__`}}",
+                                    "campaignDate": "",
+                                    "patientsText": "{{20.text}}",
+                                    "campaignSentDate": ""
+                                },
+                                "overwrite": true
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1200,
+                                    "y": 0,
+                                    "name": "One Smile Doctors"
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "data": {
+                                            "nested": {
+                                                "campaignSent": {
+                                                    "mode": "chose"
+                                                }
+                                            }
+                                        },
+                                        "overwrite": {
+                                            "mode": "chose"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "datastore": {
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "datastore",
+                                        "type": "datastore",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "key",
+                                        "type": "text",
+                                        "label": "{{connectionLabel}}"
+                                    },
+                                    {
+                                        "name": "overwrite",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "data",
+                                        "spec": [
+                                            {
+                                                "name": "doctorEmail",
+                                                "type": "text",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "campaignId",
+                                                "type": "text",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "campaignSent",
+                                                "type": "boolean",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "campaignDate",
+                                                "type": "date",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "campaignSentDate",
+                                                "type": "date",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "patientsText",
+                                                "type": "text",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "Status",
+                                                "type": "text",
+                                                "label": null
+                                            }
+                                        ],
+                                        "type": "collection",
+                                        "label": "{{connectionLabel}}"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 67,
+                            "module": "util:TextAggregator",
+                            "version": 1,
+                            "parameters": {
+                                "feeder": 20,
+                                "rowSeparator": "other",
+                                "otherRowSeparator": ","
+                            },
+                            "mapper": {
+                                "value": "{{20.`__IMTKEY__`}}"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1500,
+                                    "y": 0,
+                                    "name": "doctors list"
+                                },
+                                "restore": {
+                                    "extra": {
+                                        "feeder": {
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "rowSeparator": {
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "rowSeparator",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "validate": {
+                                            "enum": [
+                                                "\n",
+                                                "\t",
+                                                "other"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "otherRowSeparator",
+                                        "type": "text",
+                                        "label": "{{connectionLabel}}"
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "value",
+                                        "type": "text",
+                                        "label": "{{connectionLabel}}"
+                                    }
+                                ],
+                                "advanced": true
+                            },
+                            "flags": {
+                                "stopIfEmpty": true
+                            }
+                        },
+                        {
+                            "id": 65,
+                            "module": "http:ActionSendData",
+                            "version": 3,
+                            "parameters": {
+                                "handleErrors": true,
+                                "useNewZLibDeCompress": true
+                            },
+                            "mapper": {
+                                "ca": "",
+                                "qs": [],
+                                "url": "https://hook.eu2.make.com/xxxxxx",
+                                "data": "[{\"{{brand}}\" : \"{{first(split(67.text; \",\"))}}\"}]",
+                                "gzip": true,
+                                "method": "post",
+                                "headers": [],
+                                "timeout": "",
+                                "useMtls": false,
+                                "authPass": "",
+                                "authUser": "",
+                                "bodyType": "raw",
+                                "contentType": "application/json",
+                                "serializeUrl": false,
+                                "shareCookies": false,
+                                "parseResponse": false,
+                                "followRedirect": true,
+                                "useQuerystring": false,
+                                "followAllRedirects": false,
+                                "rejectUnauthorized": true
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1800,
+                                    "y": 0,
+                                    "name": "{{brand}}e - create campaign 1st doc"
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "qs": {
+                                            "mode": "chose"
+                                        },
+                                        "method": {
+                                            "mode": "chose",
+                                            "label": "{{connectionLabel}}"
+                                        },
+                                        "headers": {
+                                            "mode": "chose"
+                                        },
+                                        "bodyType": {
+                                            "label": "{{connectionLabel}}"
+                                        },
+                                        "contentType": {
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "handleErrors",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "useNewZLibDeCompress",
+                                        "type": "hidden"
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "url",
+                                        "type": "url",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "serializeUrl",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "method",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "get",
+                                                "head",
+                                                "post",
+                                                "put",
+                                                "patch",
+                                                "delete",
+                                                "options"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "headers",
+                                        "spec": [
+                                            {
+                                                "name": "name",
+                                                "type": "text",
+                                                "label": "{{connectionLabel}}",
+                                                "required": true
+                                            },
+                                            {
+                                                "name": "value",
+                                                "type": "text",
+                                                "label": "{{connectionLabel}}"
+                                            }
+                                        ],
+                                        "type": "array",
+                                        "label": "{{connectionLabel}}"
+                                    },
+                                    {
+                                        "name": "qs",
+                                        "spec": [
+                                            {
+                                                "name": "name",
+                                                "type": "text",
+                                                "label": "{{connectionLabel}}",
+                                                "required": true
+                                            },
+                                            {
+                                                "name": "value",
+                                                "type": "text",
+                                                "label": "{{connectionLabel}}"
+                                            }
+                                        ],
+                                        "type": "array",
+                                        "label": "{{connectionLabel}}"
+                                    },
+                                    {
+                                        "name": "bodyType",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "validate": {
+                                            "enum": [
+                                                "raw",
+                                                "x_www_form_urlencoded",
+                                                "multipart_form_data"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "parseResponse",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "authUser",
+                                        "type": "text",
+                                        "label": "{{connectionLabel}}"
+                                    },
+                                    {
+                                        "name": "authPass",
+                                        "type": "password",
+                                        "label": "{{connectionLabel}}"
+                                    },
+                                    {
+                                        "name": "timeout",
+                                        "type": "uinteger",
+                                        "label": "{{connectionLabel}}",
+                                        "validate": {
+                                            "max": 300,
+                                            "min": 1
+                                        }
+                                    },
+                                    {
+                                        "name": "shareCookies",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "ca",
+                                        "type": "cert",
+                                        "label": "{{connectionLabel}}"
+                                    },
+                                    {
+                                        "name": "rejectUnauthorized",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "followRedirect",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "useQuerystring",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "gzip",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "useMtls",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "contentType",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "validate": {
+                                            "enum": [
+                                                "text/plain",
+                                                "application/json",
+                                                "application/xml",
+                                                "text/xml",
+                                                "text/html",
+                                                "custom"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "data",
+                                        "type": "buffer",
+                                        "label": "{{connectionLabel}}"
+                                    },
+                                    {
+                                        "name": "followAllRedirects",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    }
+                                ]
+                            },
+                            "onerror": [
+                                {
+                                    "id": 69,
+                                    "module": "builtin:Break",
+                                    "version": 1,
+                                    "parameters": {},
+                                    "mapper": {
+                                        "count": "3",
+                                        "retry": true,
+                                        "interval": "15"
+                                    },
+                                    "metadata": {
+                                        "designer": {
+                                            "x": 2100,
+                                            "y": 0
+                                        },
+                                        "restore": {
+                                            "expect": {
+                                                "retry": {
+                                                    "mode": "chose"
+                                                }
+                                            }
+                                        },
+                                        "expect": [
+                                            {
+                                                "name": "retry",
+                                                "type": "boolean",
+                                                "label": "{{connectionLabel}}",
+                                                "required": true
+                                            },
+                                            {
+                                                "name": "count",
+                                                "type": "uinteger",
+                                                "label": "{{connectionLabel}}",
+                                                "required": true,
+                                                "validate": {
+                                                    "max": 10000,
+                                                    "min": 1
+                                                }
+                                            },
+                                            {
+                                                "name": "interval",
+                                                "type": "uinteger",
+                                                "label": "{{connectionLabel}}",
+                                                "required": true,
+                                                "validate": {
+                                                    "max": 44640,
+                                                    "min": 1
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "flow": [
+                        {
+                            "id": 34,
+                            "module": "util:TextAggregator",
+                            "version": 1,
+                            "parameters": {
+                                "feeder": 2,
+                                "rowSeparator": ""
+                            },
+                            "filter": {
+                                "name": "Not {{brand}} and {{brand}}",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{2.properties.dental_group}}",
+                                            "b": "{{brand}}",
+                                            "o": "text:equal:ci"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "a": "{{2.properties.doctor_email}}",
+                                            "b": "{{brand}}.com.au",
+                                            "o": "text:contain:ci"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "a": "{{2.properties.dental_group}}",
+                                            "b": "{{brand}} Clinics",
+                                            "o": "text:equal:ci"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "a": "{{2.properties.doctor_email}}",
+                                            "b": "smileon.com.au",
+                                            "o": "text:contain:ci"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "mapper": {
+                                "value": "<li>{{startcase(2.properties.patient_name)}}{{space}}({{2.properties.case_reference}})</li>"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 600,
+                                    "y": 750
+                                },
+                                "restore": {
+                                    "extra": {
+                                        "feeder": {
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "rowSeparator": {
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "rowSeparator",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "validate": {
+                                            "enum": [
+                                                "\n",
+                                                "\t",
+                                                "other"
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "value",
+                                        "type": "text",
+                                        "label": "{{connectionLabel}}"
+                                    }
+                                ],
+                                "advanced": true
+                            },
+                            "flags": {
+                                "groupBy": "{{2.properties.doctor_email}}",
+                                "stopIfEmpty": true
+                            }
+                        },
+                        {
+                            "id": 74,
+                            "module": "mailchimp:getASubscriber",
+                            "version": 2,
+                            "parameters": {
+                                "__IMTCONN__": 6776474
+                            },
+                            "filter": {
+                                "name": "Email Exists",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{34.`__IMTKEY__`}}",
+                                            "o": "exist"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "mapper": {
+                                "list": "{mailchimpListId}",
+                                "email": "{{34.`__IMTKEY__`}}",
+                                "getSubscriber": "by_email"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 900,
+                                    "y": 750
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "list": {
+                                            "mode": "chose",
+                                            "label": "{{connectionLabel}}"
+                                        },
+                                        "email": {
+                                            "mode": "edit"
+                                        },
+                                        "getSubscriber": {
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "mailchimp"
+                                            },
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:mailchimp",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "getSubscriber",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "by_id",
+                                                "by_email",
+                                                "by_unique_email__id"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "mode": "edit",
+                                        "name": "list",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "mode": "edit",
+                                        "name": "email",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    }
+                                ]
+                            },
+                            "onerror": [
+                                {
+                                    "id": 78,
+                                    "module": "builtin:Ignore",
+                                    "version": 1,
+                                    "metadata": {
+                                        "designer": {
+                                            "x": 1200,
+                                            "y": 900
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "id": 61,
+                            "module": "datastore:AddRecord",
+                            "version": 1,
+                            "parameters": {
+                                "datastore": {{dataStoreId2}}
+                            },
+                            "mapper": {
+                                "key": "{{34.`__IMTKEY__`}}",
+                                "data": {
+                                    "Status": "{{74.status}}",
+                                    "campaignId": "",
+                                    "doctorEmail": "{{34.`__IMTKEY__`}}",
+                                    "campaignDate": "",
+                                    "patientsText": "{{34.text}}",
+                                    "campaignSentDate": ""
+                                },
+                                "overwrite": true
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1200,
+                                    "y": 600,
+                                    "name": "{{brand}} Doctors"
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "data": {
+                                            "nested": {
+                                                "campaignSent": {
+                                                    "mode": "chose"
+                                                }
+                                            }
+                                        },
+                                        "overwrite": {
+                                            "mode": "chose"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "datastore": {
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "datastore",
+                                        "type": "datastore",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "key",
+                                        "type": "text",
+                                        "label": "{{connectionLabel}}"
+                                    },
+                                    {
+                                        "name": "overwrite",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "data",
+                                        "spec": [
+                                            {
+                                                "name": "doctorEmail",
+                                                "type": "text",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "campaignId",
+                                                "type": "text",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "campaignSent",
+                                                "type": "boolean",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "campaignDate",
+                                                "type": "date",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "campaignSentDate",
+                                                "type": "date",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "patientsText",
+                                                "type": "text",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "Status",
+                                                "type": "text",
+                                                "label": null
+                                            }
+                                        ],
+                                        "type": "collection",
+                                        "label": "{{connectionLabel}}"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 68,
+                            "module": "util:TextAggregator",
+                            "version": 1,
+                            "parameters": {
+                                "feeder": 34,
+                                "rowSeparator": "other",
+                                "otherRowSeparator": ","
+                            },
+                            "mapper": {
+                                "value": "{{34.`__IMTKEY__`}}"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1500,
+                                    "y": 600,
+                                    "name": "{{brand}} Doctors list"
+                                },
+                                "restore": {
+                                    "extra": {
+                                        "feeder": {
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "rowSeparator": {
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "rowSeparator",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "validate": {
+                                            "enum": [
+                                                "\n",
+                                                "\t",
+                                                "other"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "otherRowSeparator",
+                                        "type": "text",
+                                        "label": "{{connectionLabel}}"
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "value",
+                                        "type": "text",
+                                        "label": "{{connectionLabel}}"
+                                    }
+                                ],
+                                "advanced": true
+                            }
+                        },
+                        {
+                            "id": 62,
+                            "module": "http:ActionSendData",
+                            "version": 3,
+                            "parameters": {
+                                "handleErrors": true,
+                                "useNewZLibDeCompress": true
+                            },
+                            "mapper": {
+                                "ca": "",
+                                "qs": [],
+                                "url": "https://hook.eu2.make.com/xxxxxx",
+                                "data": "[{\"smile{{brand}}\" : \"{{first(split(68.text; \",\"))}}\"}]",
+                                "gzip": true,
+                                "method": "post",
+                                "headers": [],
+                                "timeout": "",
+                                "useMtls": false,
+                                "authPass": "",
+                                "authUser": "",
+                                "bodyType": "raw",
+                                "contentType": "application/json",
+                                "serializeUrl": false,
+                                "shareCookies": false,
+                                "parseResponse": false,
+                                "followRedirect": true,
+                                "useQuerystring": false,
+                                "followAllRedirects": false,
+                                "rejectUnauthorized": true
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1800,
+                                    "y": 600,
+                                    "name": "{{brand}} and {{brand}} create campaign"
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "qs": {
+                                            "mode": "chose"
+                                        },
+                                        "method": {
+                                            "mode": "chose",
+                                            "label": "{{connectionLabel}}"
+                                        },
+                                        "headers": {
+                                            "mode": "chose"
+                                        },
+                                        "bodyType": {
+                                            "label": "{{connectionLabel}}"
+                                        },
+                                        "contentType": {
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "handleErrors",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "useNewZLibDeCompress",
+                                        "type": "hidden"
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "url",
+                                        "type": "url",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "serializeUrl",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "method",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "get",
+                                                "head",
+                                                "post",
+                                                "put",
+                                                "patch",
+                                                "delete",
+                                                "options"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "headers",
+                                        "spec": [
+                                            {
+                                                "name": "name",
+                                                "type": "text",
+                                                "label": "{{connectionLabel}}",
+                                                "required": true
+                                            },
+                                            {
+                                                "name": "value",
+                                                "type": "text",
+                                                "label": "{{connectionLabel}}"
+                                            }
+                                        ],
+                                        "type": "array",
+                                        "label": "{{connectionLabel}}"
+                                    },
+                                    {
+                                        "name": "qs",
+                                        "spec": [
+                                            {
+                                                "name": "name",
+                                                "type": "text",
+                                                "label": "{{connectionLabel}}",
+                                                "required": true
+                                            },
+                                            {
+                                                "name": "value",
+                                                "type": "text",
+                                                "label": "{{connectionLabel}}"
+                                            }
+                                        ],
+                                        "type": "array",
+                                        "label": "{{connectionLabel}}"
+                                    },
+                                    {
+                                        "name": "bodyType",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "validate": {
+                                            "enum": [
+                                                "raw",
+                                                "x_www_form_urlencoded",
+                                                "multipart_form_data"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "parseResponse",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "authUser",
+                                        "type": "text",
+                                        "label": "{{connectionLabel}}"
+                                    },
+                                    {
+                                        "name": "authPass",
+                                        "type": "password",
+                                        "label": "{{connectionLabel}}"
+                                    },
+                                    {
+                                        "name": "timeout",
+                                        "type": "uinteger",
+                                        "label": "{{connectionLabel}}",
+                                        "validate": {
+                                            "max": 300,
+                                            "min": 1
+                                        }
+                                    },
+                                    {
+                                        "name": "shareCookies",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "ca",
+                                        "type": "cert",
+                                        "label": "{{connectionLabel}}"
+                                    },
+                                    {
+                                        "name": "rejectUnauthorized",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "followRedirect",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "useQuerystring",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "gzip",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "useMtls",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "contentType",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "validate": {
+                                            "enum": [
+                                                "text/plain",
+                                                "application/json",
+                                                "application/xml",
+                                                "text/xml",
+                                                "text/html",
+                                                "custom"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "data",
+                                        "type": "buffer",
+                                        "label": "{{connectionLabel}}"
+                                    },
+                                    {
+                                        "name": "followAllRedirects",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    }
+                                ]
+                            },
+                            "onerror": [
+                                {
+                                    "id": 70,
+                                    "module": "builtin:Break",
+                                    "version": 1,
+                                    "parameters": {},
+                                    "mapper": {
+                                        "count": "3",
+                                        "retry": true,
+                                        "interval": "15"
+                                    },
+                                    "metadata": {
+                                        "designer": {
+                                            "x": 2100,
+                                            "y": 600
+                                        },
+                                        "restore": {
+                                            "expect": {
+                                                "retry": {
+                                                    "mode": "chose"
+                                                }
+                                            }
+                                        },
+                                        "expect": [
+                                            {
+                                                "name": "retry",
+                                                "type": "boolean",
+                                                "label": "{{connectionLabel}}",
+                                                "required": true
+                                            },
+                                            {
+                                                "name": "count",
+                                                "type": "uinteger",
+                                                "label": "{{connectionLabel}}",
+                                                "required": true,
+                                                "validate": {
+                                                    "max": 10000,
+                                                    "min": 1
+                                                }
+                                            },
+                                            {
+                                                "name": "interval",
+                                                "type": "uinteger",
+                                                "label": "{{connectionLabel}}",
+                                                "required": true,
+                                                "validate": {
+                                                    "max": 44640,
+                                                    "min": 1
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": true,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": true,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu2.make.com",
+        "notes": []
+    }
+}

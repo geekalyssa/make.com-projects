@@ -1,0 +1,88 @@
+{
+    "name": "TPR Weekly Reminders: Clear Records from Data Store",
+    "flow": [
+        {
+            "id": 1,
+            "module": "datastore:DeleteAllRecords",
+            "version": 1,
+            "parameters": {
+                "datastore": {{dataStoreId1}}
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0,
+                    "name": "clear {{brand}}"
+                },
+                "restore": {
+                    "parameters": {
+                        "datastore": {
+                            "label": "{{connectionLabel}}"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "datastore",
+                        "type": "datastore",
+                        "label": "{{connectionLabel}}",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "datastore:DeleteAllRecords",
+            "version": 1,
+            "parameters": {
+                "datastore": {{dataStoreId2}}
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 253,
+                    "y": 2,
+                    "name": "clear {{brand}}"
+                },
+                "restore": {
+                    "parameters": {
+                        "datastore": {
+                            "label": "{{connectionLabel}}"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "datastore",
+                        "type": "datastore",
+                        "label": "{{connectionLabel}}",
+                        "required": true
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu2.make.com",
+        "notes": []
+    }
+}

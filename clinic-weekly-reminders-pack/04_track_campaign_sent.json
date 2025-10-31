@@ -1,0 +1,1621 @@
+{
+    "name": "TRP Weekly Reminders : Track Campaign Sent",
+    "flow": [
+        {
+            "id": 2,
+            "module": "mailchimp:watchListEvents",
+            "version": 2,
+            "parameters": {
+                "hook": "xxxxxx"
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 450
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTHOOK__": {
+                            "data": {
+                                "editable": "false"
+                            },
+                            "label": "{{connectionLabel}}"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTHOOK__",
+                        "type": "hook:mailchimp",
+                        "label": "{{connectionLabel}}",
+                        "required": true
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "webhook_type",
+                        "type": "text",
+                        "label": "{{connectionLabel}}"
+                    },
+                    {
+                        "name": "id",
+                        "type": "text",
+                        "label": "{{connectionLabel}}"
+                    },
+                    {
+                        "name": "subject",
+                        "type": "text",
+                        "label": "{{connectionLabel}}"
+                    },
+                    {
+                        "name": "status",
+                        "type": "email",
+                        "label": "{{connectionLabel}}"
+                    },
+                    {
+                        "name": "reason",
+                        "type": "text",
+                        "label": "{{connectionLabel}}"
+                    },
+                    {
+                        "name": "list_id",
+                        "type": "text",
+                        "label": "{{connectionLabel}}"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 4,
+            "module": "mailchimp:getACampaignReport",
+            "version": 2,
+            "parameters": {
+                "__IMTCONN__": 6776474
+            },
+            "filter": {
+                "name": "campaign status",
+                "conditions": [
+                    [
+                        {
+                            "a": "{{2.status}}",
+                            "b": "sent",
+                            "o": "text:equal"
+                        },
+                        {
+                            "a": "{{2.id}}",
+                            "o": "exist"
+                        },
+                        {
+                            "a": "{{2.webhook_type}}",
+                            "b": "campaign",
+                            "o": "text:equal"
+                        }
+                    ]
+                ]
+            },
+            "mapper": {
+                "campaign": "{{2.id}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 450
+                },
+                "restore": {
+                    "expect": {
+                        "campaign": {
+                            "mode": "edit"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "mailchimp"
+                            },
+                            "label": "{{connectionLabel}}"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:mailchimp",
+                        "label": "{{connectionLabel}}",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "mode": "edit",
+                        "name": "campaign",
+                        "type": "select",
+                        "label": "{{connectionLabel}}",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 5,
+            "module": "builtin:BasicRouter",
+            "version": 1,
+            "filter": {
+                "name": "Email Sent",
+                "conditions": [
+                    [
+                        {
+                            "a": "{{4.id}}",
+                            "o": "exist"
+                        }
+                    ]
+                ]
+            },
+            "mapper": null,
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 450
+                }
+            },
+            "routes": [
+                {
+                    "flow": [
+                        {
+                            "id": 3,
+                            "module": "datastore:UpdateRecord",
+                            "version": 1,
+                            "parameters": {
+                                "datastore": {{dataStoreId1}}
+                            },
+                            "filter": {
+                                "name": "{{brand}}",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{4.campaign_title}}",
+                                            "b": "{{brand}}",
+                                            "o": "text:contain"
+                                        },
+                                        {
+                                            "a": "{{4.emails_sent}}",
+                                            "b": "1",
+                                            "o": "number:equal"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "mapper": {
+                                "key": "{{get(split(4.campaign_title; \"-\"); 2)}}",
+                                "data": {
+                                    "campaignId": "",
+                                    "doctorEmail": "",
+                                    "campaignDate": "",
+                                    "campaignSent": true,
+                                    "patientsText": "",
+                                    "campaignSentDate": "{{4.send_time}}"
+                                },
+                                "upsert": false,
+                                "overwriteArrays": false
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 900,
+                                    "y": 150,
+                                    "name": "{{brand}}"
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "data": {
+                                            "nested": {
+                                                "campaignSent": {
+                                                    "mode": "chose"
+                                                }
+                                            }
+                                        },
+                                        "upsert": {
+                                            "mode": "chose"
+                                        },
+                                        "overwriteArrays": {
+                                            "mode": "chose"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "datastore": {
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "datastore",
+                                        "type": "datastore",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "key",
+                                        "type": "text",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "upsert",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "overwriteArrays",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "data",
+                                        "spec": [
+                                            {
+                                                "name": "doctorEmail",
+                                                "type": "text",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "campaignId",
+                                                "type": "text",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "campaignSent",
+                                                "type": "boolean",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "campaignDate",
+                                                "type": "date",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "campaignSentDate",
+                                                "type": "date",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "patientsText",
+                                                "type": "text",
+                                                "label": null
+                                            }
+                                        ],
+                                        "type": "collection",
+                                        "label": "{{connectionLabel}}"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 9,
+                            "module": "mailchimp:addRemoveATag",
+                            "version": 2,
+                            "parameters": {
+                                "__IMTCONN__": 6776474
+                            },
+                            "mapper": {
+                                "list": "{mailchimpListId}",
+                                "tags": [
+                                    {
+                                        "name": "{{brand}}_TPRCasesAlert",
+                                        "status": "inactive"
+                                    }
+                                ],
+                                "email": "{{get(split(4.campaign_title; \"-\"); 2)}}"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1200,
+                                    "y": 150
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "list": {
+                                            "mode": "chose",
+                                            "label": "{{connectionLabel}}"
+                                        },
+                                        "tags": {
+                                            "mode": "chose",
+                                            "items": [
+                                                {
+                                                    "status": {
+                                                        "mode": "chose",
+                                                        "label": "{{connectionLabel}}"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "email": {
+                                            "mode": "edit"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "mailchimp"
+                                            },
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:mailchimp",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "mode": "edit",
+                                        "name": "list",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "email",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "tags",
+                                        "spec": [
+                                            {
+                                                "name": "name",
+                                                "type": "text",
+                                                "label": "{{connectionLabel}}",
+                                                "required": true
+                                            },
+                                            {
+                                                "name": "status",
+                                                "type": "select",
+                                                "label": "{{connectionLabel}}",
+                                                "options": [
+                                                    {
+                                                        "label": "{{connectionLabel}}",
+                                                        "value": "active"
+                                                    },
+                                                    {
+                                                        "label": "{{connectionLabel}}",
+                                                        "value": "inactive"
+                                                    }
+                                                ],
+                                                "required": true
+                                            }
+                                        ],
+                                        "type": "array",
+                                        "label": "{{connectionLabel}}"
+                                    }
+                                ]
+                            },
+                            "onerror": [
+                                {
+                                    "id": 10,
+                                    "module": "builtin:Rollback",
+                                    "version": 1,
+                                    "metadata": {
+                                        "designer": {
+                                            "x": 1500,
+                                            "y": 300
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "id": 15,
+                            "module": "builtin:BasicRouter",
+                            "version": 1,
+                            "mapper": null,
+                            "metadata": {
+                                "designer": {
+                                    "x": 1500,
+                                    "y": 0
+                                }
+                            },
+                            "routes": [
+                                {
+                                    "flow": [
+                                        {
+                                            "id": 14,
+                                            "module": "datastore:SearchRecord",
+                                            "version": 1,
+                                            "parameters": {
+                                                "limit": 1,
+                                                "datastore": {{dataStoreId1}},
+                                                "continueWhenNoRes": false
+                                            },
+                                            "mapper": {
+                                                "sort": [],
+                                                "filter": [
+                                                    [
+                                                        {
+                                                            "a": "campaignSent",
+                                                            "b": "true",
+                                                            "o": "boolean:notequal"
+                                                        },
+                                                        {
+                                                            "a": "campaignSentDate",
+                                                            "o": "notexist"
+                                                        },
+                                                        {
+                                                            "a": "Status",
+                                                            "b": "unsubscribed",
+                                                            "o": "text:notequal:ci"
+                                                        }
+                                                    ]
+                                                ],
+                                                "mappAbleLimit": ""
+                                            },
+                                            "metadata": {
+                                                "designer": {
+                                                    "x": 1800,
+                                                    "y": 0,
+                                                    "name": "{{brand}}"
+                                                },
+                                                "restore": {
+                                                    "parameters": {
+                                                        "datastore": {
+                                                            "label": "{{connectionLabel}}"
+                                                        }
+                                                    }
+                                                },
+                                                "parameters": [
+                                                    {
+                                                        "name": "datastore",
+                                                        "type": "datastore",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "continueWhenNoRes",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "limit",
+                                                        "type": "uinteger",
+                                                        "label": "{{connectionLabel}}"
+                                                    }
+                                                ],
+                                                "expect": [
+                                                    {
+                                                        "name": "filter",
+                                                        "type": "filter",
+                                                        "label": "{{connectionLabel}}",
+                                                        "options": "rpc://datastore/1.11.0/RpcGetUDTKeys",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "sort",
+                                                        "spec": [
+                                                            {
+                                                                "name": "key",
+                                                                "type": "select",
+                                                                "label": "{{connectionLabel}}",
+                                                                "dynamic": true,
+                                                                "options": [],
+                                                                "required": true
+                                                            },
+                                                            {
+                                                                "name": "order",
+                                                                "type": "select",
+                                                                "label": "{{connectionLabel}}",
+                                                                "options": [
+                                                                    {
+                                                                        "label": "{{connectionLabel}}",
+                                                                        "value": 1
+                                                                    },
+                                                                    {
+                                                                        "label": "{{connectionLabel}}",
+                                                                        "value": -1
+                                                                    }
+                                                                ],
+                                                                "required": true
+                                                            }
+                                                        ],
+                                                        "type": "array",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "mappAbleLimit",
+                                                        "type": "uinteger",
+                                                        "label": "{{connectionLabel}}"
+                                                    }
+                                                ],
+                                                "interface": [
+                                                    {
+                                                        "name": "key",
+                                                        "type": "text",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "data",
+                                                        "spec": [
+                                                            {
+                                                                "name": "doctorEmail",
+                                                                "type": "text",
+                                                                "label": null,
+                                                                "default": null,
+                                                                "required": false,
+                                                                "multiline": false
+                                                            },
+                                                            {
+                                                                "name": "campaignId",
+                                                                "type": "text",
+                                                                "label": null,
+                                                                "default": null,
+                                                                "required": false,
+                                                                "multiline": false
+                                                            },
+                                                            {
+                                                                "name": "campaignSent",
+                                                                "type": "boolean",
+                                                                "label": null,
+                                                                "required": false
+                                                            },
+                                                            {
+                                                                "name": "campaignDate",
+                                                                "type": "date",
+                                                                "label": null,
+                                                                "required": false
+                                                            },
+                                                            {
+                                                                "name": "campaignSentDate",
+                                                                "type": "date",
+                                                                "label": null,
+                                                                "required": false
+                                                            },
+                                                            {
+                                                                "name": "patientsText",
+                                                                "type": "text",
+                                                                "label": null,
+                                                                "default": null,
+                                                                "required": false,
+                                                                "multiline": false
+                                                            },
+                                                            {
+                                                                "name": "Status",
+                                                                "type": "text",
+                                                                "label": null,
+                                                                "default": null,
+                                                                "required": false,
+                                                                "multiline": false
+                                                            }
+                                                        ],
+                                                        "type": "collection",
+                                                        "label": "{{connectionLabel}}"
+                                                    }
+                                                ],
+                                                "advanced": true
+                                            }
+                                        },
+                                        {
+                                            "id": 24,
+                                            "module": "util:FunctionSleep",
+                                            "version": 1,
+                                            "parameters": {},
+                                            "mapper": {
+                                                "duration": "10"
+                                            },
+                                            "metadata": {
+                                                "designer": {
+                                                    "x": 2100,
+                                                    "y": 0
+                                                },
+                                                "restore": {},
+                                                "expect": [
+                                                    {
+                                                        "name": "duration",
+                                                        "type": "uinteger",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true,
+                                                        "validate": {
+                                                            "max": 300,
+                                                            "min": 1
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "id": 13,
+                                            "module": "http:ActionSendData",
+                                            "version": 3,
+                                            "parameters": {
+                                                "handleErrors": true,
+                                                "useNewZLibDeCompress": true
+                                            },
+                                            "mapper": {
+                                                "ca": "",
+                                                "qs": [],
+                                                "url": "https://hook.eu2.make.com/xxxxxx",
+                                                "data": "[{\"{{brand}}\" : \"{{14.data.doctorEmail}}\"}]",
+                                                "gzip": true,
+                                                "method": "post",
+                                                "headers": [],
+                                                "timeout": "",
+                                                "useMtls": false,
+                                                "authPass": "",
+                                                "authUser": "",
+                                                "bodyType": "raw",
+                                                "contentType": "application/json",
+                                                "serializeUrl": false,
+                                                "shareCookies": false,
+                                                "parseResponse": false,
+                                                "followRedirect": true,
+                                                "useQuerystring": false,
+                                                "followAllRedirects": false,
+                                                "rejectUnauthorized": true
+                                            },
+                                            "metadata": {
+                                                "designer": {
+                                                    "x": 2400,
+                                                    "y": 0,
+                                                    "name": "{{brand}}e"
+                                                },
+                                                "restore": {
+                                                    "expect": {
+                                                        "qs": {
+                                                            "mode": "chose"
+                                                        },
+                                                        "method": {
+                                                            "mode": "chose",
+                                                            "label": "{{connectionLabel}}"
+                                                        },
+                                                        "headers": {
+                                                            "mode": "chose"
+                                                        },
+                                                        "bodyType": {
+                                                            "label": "{{connectionLabel}}"
+                                                        },
+                                                        "contentType": {
+                                                            "label": "{{connectionLabel}}"
+                                                        }
+                                                    }
+                                                },
+                                                "parameters": [
+                                                    {
+                                                        "name": "handleErrors",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "useNewZLibDeCompress",
+                                                        "type": "hidden"
+                                                    }
+                                                ],
+                                                "expect": [
+                                                    {
+                                                        "name": "url",
+                                                        "type": "url",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "serializeUrl",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "method",
+                                                        "type": "select",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true,
+                                                        "validate": {
+                                                            "enum": [
+                                                                "get",
+                                                                "head",
+                                                                "post",
+                                                                "put",
+                                                                "patch",
+                                                                "delete",
+                                                                "options"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "headers",
+                                                        "spec": [
+                                                            {
+                                                                "name": "name",
+                                                                "type": "text",
+                                                                "label": "{{connectionLabel}}",
+                                                                "required": true
+                                                            },
+                                                            {
+                                                                "name": "value",
+                                                                "type": "text",
+                                                                "label": "{{connectionLabel}}"
+                                                            }
+                                                        ],
+                                                        "type": "array",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "qs",
+                                                        "spec": [
+                                                            {
+                                                                "name": "name",
+                                                                "type": "text",
+                                                                "label": "{{connectionLabel}}",
+                                                                "required": true
+                                                            },
+                                                            {
+                                                                "name": "value",
+                                                                "type": "text",
+                                                                "label": "{{connectionLabel}}"
+                                                            }
+                                                        ],
+                                                        "type": "array",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "bodyType",
+                                                        "type": "select",
+                                                        "label": "{{connectionLabel}}",
+                                                        "validate": {
+                                                            "enum": [
+                                                                "raw",
+                                                                "x_www_form_urlencoded",
+                                                                "multipart_form_data"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "parseResponse",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "authUser",
+                                                        "type": "text",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "authPass",
+                                                        "type": "password",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "timeout",
+                                                        "type": "uinteger",
+                                                        "label": "{{connectionLabel}}",
+                                                        "validate": {
+                                                            "max": 300,
+                                                            "min": 1
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "shareCookies",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "ca",
+                                                        "type": "cert",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "rejectUnauthorized",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "followRedirect",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "useQuerystring",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "gzip",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "useMtls",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "contentType",
+                                                        "type": "select",
+                                                        "label": "{{connectionLabel}}",
+                                                        "validate": {
+                                                            "enum": [
+                                                                "text/plain",
+                                                                "application/json",
+                                                                "application/xml",
+                                                                "text/xml",
+                                                                "text/html",
+                                                                "custom"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "data",
+                                                        "type": "buffer",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "followAllRedirects",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "flow": [
+                        {
+                            "id": 6,
+                            "module": "datastore:UpdateRecord",
+                            "version": 1,
+                            "parameters": {
+                                "datastore": {{dataStoreId2}}
+                            },
+                            "filter": {
+                                "name": "{{brand}} and {{brand}}",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{4.campaign_title}}",
+                                            "b": "{{brand}}",
+                                            "o": "text:contain"
+                                        },
+                                        {
+                                            "a": "{{4.emails_sent}}",
+                                            "b": "1",
+                                            "o": "number:equal"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "mapper": {
+                                "key": "{{get(split(4.campaign_title; \"-\"); 2)}}",
+                                "data": {
+                                    "campaignId": "",
+                                    "doctorEmail": "",
+                                    "campaignDate": "",
+                                    "campaignSent": true,
+                                    "patientsText": "",
+                                    "campaignSentDate": "{{4.send_time}}"
+                                },
+                                "upsert": false,
+                                "overwriteArrays": false
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 900,
+                                    "y": 750,
+                                    "name": "{{brand}}"
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "data": {
+                                            "nested": {
+                                                "campaignSent": {
+                                                    "mode": "chose"
+                                                }
+                                            }
+                                        },
+                                        "upsert": {
+                                            "mode": "chose"
+                                        },
+                                        "overwriteArrays": {
+                                            "mode": "chose"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "datastore": {
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "datastore",
+                                        "type": "datastore",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "key",
+                                        "type": "text",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "upsert",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "overwriteArrays",
+                                        "type": "boolean",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "data",
+                                        "spec": [
+                                            {
+                                                "name": "doctorEmail",
+                                                "type": "text",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "campaignId",
+                                                "type": "text",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "campaignSent",
+                                                "type": "boolean",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "campaignDate",
+                                                "type": "date",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "campaignSentDate",
+                                                "type": "date",
+                                                "label": null
+                                            },
+                                            {
+                                                "name": "patientsText",
+                                                "type": "text",
+                                                "label": null
+                                            }
+                                        ],
+                                        "type": "collection",
+                                        "label": "{{connectionLabel}}"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 11,
+                            "module": "mailchimp:addRemoveATag",
+                            "version": 2,
+                            "parameters": {
+                                "__IMTCONN__": 6776474
+                            },
+                            "mapper": {
+                                "list": "{mailchimpListId}",
+                                "tags": [
+                                    {
+                                        "name": "SO{{brand}}_TPRCasesAlert",
+                                        "status": "inactive"
+                                    }
+                                ],
+                                "email": "{{get(split(4.campaign_title; \"-\"); 2)}}"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1200,
+                                    "y": 750
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "list": {
+                                            "mode": "chose",
+                                            "label": "{{connectionLabel}}"
+                                        },
+                                        "tags": {
+                                            "mode": "chose",
+                                            "items": [
+                                                {
+                                                    "status": {
+                                                        "mode": "chose",
+                                                        "label": "{{connectionLabel}}"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "email": {
+                                            "mode": "edit"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "mailchimp"
+                                            },
+                                            "label": "{{connectionLabel}}"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:mailchimp",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "mode": "edit",
+                                        "name": "list",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "email",
+                                        "type": "select",
+                                        "label": "{{connectionLabel}}",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "tags",
+                                        "spec": [
+                                            {
+                                                "name": "name",
+                                                "type": "text",
+                                                "label": "{{connectionLabel}}",
+                                                "required": true
+                                            },
+                                            {
+                                                "name": "status",
+                                                "type": "select",
+                                                "label": "{{connectionLabel}}",
+                                                "options": [
+                                                    {
+                                                        "label": "{{connectionLabel}}",
+                                                        "value": "active"
+                                                    },
+                                                    {
+                                                        "label": "{{connectionLabel}}",
+                                                        "value": "inactive"
+                                                    }
+                                                ],
+                                                "required": true
+                                            }
+                                        ],
+                                        "type": "array",
+                                        "label": "{{connectionLabel}}"
+                                    }
+                                ]
+                            },
+                            "onerror": [
+                                {
+                                    "id": 12,
+                                    "module": "builtin:Rollback",
+                                    "version": 1,
+                                    "metadata": {
+                                        "designer": {
+                                            "x": 1500,
+                                            "y": 900
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "id": 19,
+                            "module": "builtin:BasicRouter",
+                            "version": 1,
+                            "mapper": null,
+                            "metadata": {
+                                "designer": {
+                                    "x": 1500,
+                                    "y": 600
+                                }
+                            },
+                            "routes": [
+                                {
+                                    "flow": [
+                                        {
+                                            "id": 22,
+                                            "module": "datastore:SearchRecord",
+                                            "version": 1,
+                                            "parameters": {
+                                                "limit": 1,
+                                                "datastore": {{dataStoreId2}},
+                                                "continueWhenNoRes": false
+                                            },
+                                            "mapper": {
+                                                "sort": [],
+                                                "filter": [
+                                                    [
+                                                        {
+                                                            "a": "campaignSent",
+                                                            "b": "true",
+                                                            "o": "boolean:notequal"
+                                                        },
+                                                        {
+                                                            "a": "campaignSentDate",
+                                                            "o": "notexist"
+                                                        },
+                                                        {
+                                                            "a": "Status",
+                                                            "b": "unsubscribed",
+                                                            "o": "text:notequal:ci"
+                                                        }
+                                                    ]
+                                                ],
+                                                "mappAbleLimit": ""
+                                            },
+                                            "metadata": {
+                                                "designer": {
+                                                    "x": 1800,
+                                                    "y": 600,
+                                                    "name": "{{brand}} & {{brand}}"
+                                                },
+                                                "restore": {
+                                                    "parameters": {
+                                                        "datastore": {
+                                                            "label": "{{connectionLabel}}"
+                                                        }
+                                                    }
+                                                },
+                                                "parameters": [
+                                                    {
+                                                        "name": "datastore",
+                                                        "type": "datastore",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "continueWhenNoRes",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "limit",
+                                                        "type": "uinteger",
+                                                        "label": "{{connectionLabel}}"
+                                                    }
+                                                ],
+                                                "expect": [
+                                                    {
+                                                        "name": "filter",
+                                                        "type": "filter",
+                                                        "label": "{{connectionLabel}}",
+                                                        "options": "rpc://datastore/1.11.0/RpcGetUDTKeys",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "sort",
+                                                        "spec": [
+                                                            {
+                                                                "name": "key",
+                                                                "type": "select",
+                                                                "label": "{{connectionLabel}}",
+                                                                "dynamic": true,
+                                                                "options": [],
+                                                                "required": true
+                                                            },
+                                                            {
+                                                                "name": "order",
+                                                                "type": "select",
+                                                                "label": "{{connectionLabel}}",
+                                                                "options": [
+                                                                    {
+                                                                        "label": "{{connectionLabel}}",
+                                                                        "value": 1
+                                                                    },
+                                                                    {
+                                                                        "label": "{{connectionLabel}}",
+                                                                        "value": -1
+                                                                    }
+                                                                ],
+                                                                "required": true
+                                                            }
+                                                        ],
+                                                        "type": "array",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "mappAbleLimit",
+                                                        "type": "uinteger",
+                                                        "label": "{{connectionLabel}}"
+                                                    }
+                                                ],
+                                                "interface": [
+                                                    {
+                                                        "name": "key",
+                                                        "type": "text",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "data",
+                                                        "spec": [
+                                                            {
+                                                                "name": "doctorEmail",
+                                                                "type": "text",
+                                                                "label": null,
+                                                                "default": null,
+                                                                "required": false,
+                                                                "multiline": false
+                                                            },
+                                                            {
+                                                                "name": "campaignId",
+                                                                "type": "text",
+                                                                "label": null,
+                                                                "default": null,
+                                                                "required": false,
+                                                                "multiline": false
+                                                            },
+                                                            {
+                                                                "name": "campaignSent",
+                                                                "type": "boolean",
+                                                                "label": null,
+                                                                "required": false
+                                                            },
+                                                            {
+                                                                "name": "campaignDate",
+                                                                "type": "date",
+                                                                "label": null,
+                                                                "required": false
+                                                            },
+                                                            {
+                                                                "name": "campaignSentDate",
+                                                                "type": "date",
+                                                                "label": null,
+                                                                "required": false
+                                                            },
+                                                            {
+                                                                "name": "patientsText",
+                                                                "type": "text",
+                                                                "label": null,
+                                                                "default": null,
+                                                                "required": false,
+                                                                "multiline": false
+                                                            },
+                                                            {
+                                                                "name": "Status",
+                                                                "type": "text",
+                                                                "label": null,
+                                                                "default": null,
+                                                                "required": false,
+                                                                "multiline": false
+                                                            }
+                                                        ],
+                                                        "type": "collection",
+                                                        "label": "{{connectionLabel}}"
+                                                    }
+                                                ],
+                                                "advanced": true
+                                            }
+                                        },
+                                        {
+                                            "id": 25,
+                                            "module": "util:FunctionSleep",
+                                            "version": 1,
+                                            "parameters": {},
+                                            "mapper": {
+                                                "duration": "10"
+                                            },
+                                            "metadata": {
+                                                "designer": {
+                                                    "x": 2100,
+                                                    "y": 600
+                                                },
+                                                "restore": {},
+                                                "expect": [
+                                                    {
+                                                        "name": "duration",
+                                                        "type": "uinteger",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true,
+                                                        "validate": {
+                                                            "max": 300,
+                                                            "min": 1
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "id": 23,
+                                            "module": "http:ActionSendData",
+                                            "version": 3,
+                                            "parameters": {
+                                                "handleErrors": true,
+                                                "useNewZLibDeCompress": true
+                                            },
+                                            "mapper": {
+                                                "ca": "",
+                                                "qs": [],
+                                                "url": "https://hook.eu2.make.com/xxxxxx",
+                                                "data": "[{\"smile{{brand}}\" : \"{{22.data.doctorEmail}}\"}]",
+                                                "gzip": true,
+                                                "method": "post",
+                                                "headers": [],
+                                                "timeout": "",
+                                                "useMtls": false,
+                                                "authPass": "",
+                                                "authUser": "",
+                                                "bodyType": "raw",
+                                                "contentType": "application/json",
+                                                "serializeUrl": false,
+                                                "shareCookies": false,
+                                                "parseResponse": false,
+                                                "followRedirect": true,
+                                                "useQuerystring": false,
+                                                "followAllRedirects": false,
+                                                "rejectUnauthorized": true
+                                            },
+                                            "metadata": {
+                                                "designer": {
+                                                    "x": 2400,
+                                                    "y": 600,
+                                                    "name": "{{brand}} and {{brand}}"
+                                                },
+                                                "restore": {
+                                                    "expect": {
+                                                        "qs": {
+                                                            "mode": "chose"
+                                                        },
+                                                        "method": {
+                                                            "mode": "chose",
+                                                            "label": "{{connectionLabel}}"
+                                                        },
+                                                        "headers": {
+                                                            "mode": "chose"
+                                                        },
+                                                        "bodyType": {
+                                                            "label": "{{connectionLabel}}"
+                                                        },
+                                                        "contentType": {
+                                                            "label": "{{connectionLabel}}"
+                                                        }
+                                                    }
+                                                },
+                                                "parameters": [
+                                                    {
+                                                        "name": "handleErrors",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "useNewZLibDeCompress",
+                                                        "type": "hidden"
+                                                    }
+                                                ],
+                                                "expect": [
+                                                    {
+                                                        "name": "url",
+                                                        "type": "url",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "serializeUrl",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "method",
+                                                        "type": "select",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true,
+                                                        "validate": {
+                                                            "enum": [
+                                                                "get",
+                                                                "head",
+                                                                "post",
+                                                                "put",
+                                                                "patch",
+                                                                "delete",
+                                                                "options"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "headers",
+                                                        "spec": [
+                                                            {
+                                                                "name": "name",
+                                                                "type": "text",
+                                                                "label": "{{connectionLabel}}",
+                                                                "required": true
+                                                            },
+                                                            {
+                                                                "name": "value",
+                                                                "type": "text",
+                                                                "label": "{{connectionLabel}}"
+                                                            }
+                                                        ],
+                                                        "type": "array",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "qs",
+                                                        "spec": [
+                                                            {
+                                                                "name": "name",
+                                                                "type": "text",
+                                                                "label": "{{connectionLabel}}",
+                                                                "required": true
+                                                            },
+                                                            {
+                                                                "name": "value",
+                                                                "type": "text",
+                                                                "label": "{{connectionLabel}}"
+                                                            }
+                                                        ],
+                                                        "type": "array",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "bodyType",
+                                                        "type": "select",
+                                                        "label": "{{connectionLabel}}",
+                                                        "validate": {
+                                                            "enum": [
+                                                                "raw",
+                                                                "x_www_form_urlencoded",
+                                                                "multipart_form_data"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "parseResponse",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "authUser",
+                                                        "type": "text",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "authPass",
+                                                        "type": "password",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "timeout",
+                                                        "type": "uinteger",
+                                                        "label": "{{connectionLabel}}",
+                                                        "validate": {
+                                                            "max": 300,
+                                                            "min": 1
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "shareCookies",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "ca",
+                                                        "type": "cert",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "rejectUnauthorized",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "followRedirect",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "useQuerystring",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "gzip",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "useMtls",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "contentType",
+                                                        "type": "select",
+                                                        "label": "{{connectionLabel}}",
+                                                        "validate": {
+                                                            "enum": [
+                                                                "text/plain",
+                                                                "application/json",
+                                                                "application/xml",
+                                                                "text/xml",
+                                                                "text/html",
+                                                                "custom"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "data",
+                                                        "type": "buffer",
+                                                        "label": "{{connectionLabel}}"
+                                                    },
+                                                    {
+                                                        "name": "followAllRedirects",
+                                                        "type": "boolean",
+                                                        "label": "{{connectionLabel}}",
+                                                        "required": true
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "instant": true,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": true,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": true,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu2.make.com",
+        "notes": []
+    }
+}
